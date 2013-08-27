@@ -1,0 +1,14 @@
+<body>
+	<script LANGUAGE="JAVASCRIPT">
+function ClipBoard(tdObj) { //IE Only
+         var holdtext = document.all['holdtext'];
+         holdtext.innerText = tdObj.innerText;
+         Copied = holdtext.createTextRange();
+         Copied.execCommand("Copy");
+         alert("text copied");
+     }
+</script>
+<form NAME="form1" METHOD="post" ACTION="">
+         <ttextarea id="holdtext" style="display:none" ROWS="10"></ttextarea>
+</form>
+</body>

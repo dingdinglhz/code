@@ -1,0 +1,32 @@
+<script type="text/javascript">
+  function Person(name)
+  {
+  	this.name=name;
+  	this.Sayhello=function(){
+  		alert("hello, i am"+ this.name);
+  	};
+  };
+
+  function Employee(name,salary)
+  {
+  	Person.call(this, name);
+
+  	this.salary= salary;
+
+  	this.ShowMeTheMoney=function(){
+  		alert(this.name+" $"+this.salary);
+  	};
+
+  };
+
+  var BillGates=new Person("BillGates");
+  var SteveJobs=new Employee("SteveJobs",1234);
+
+  BillGates.Sayhello();
+  SteveJobs.Sayhello();
+  SteveJobs.ShowMeTheMoney();
+
+  
+
+
+</script>

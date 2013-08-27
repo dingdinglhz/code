@@ -1,0 +1,12 @@
+<script type="text/javascript">
+  function MyFunc(){alert("test--caller "+this.caller);};
+  var anObj1=new MyFunc();
+  var anObj2=new MyFunc;
+  MyFunc();
+  anObj1();
+  anObj2();
+  var anObj3={};
+  MyFunc.call(anObj3);
+  anObj3();
+
+</script>

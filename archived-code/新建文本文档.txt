@@ -1,0 +1,22 @@
+<script type="text/javascript">
+  var yourname="original yourname";
+  myname="hanzhen";
+
+  alert(myname+"and"+yourname);
+  changename();
+  function changename () {
+  	// body...
+  	alert("yourname is"+yourname);
+  	alert("myname   is"+myname  );
+
+  	var yourname="new yourname";
+  	myname="new myname";
+
+  	alert(myname+"and"+yourname);
+  	alert(changename.toString());
+  	alert("caller is /n"+changename.caller);
+  	
+  };
+
+  alert(myname+"and"+yourname);
+</script>

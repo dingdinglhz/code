@@ -1,0 +1,151 @@
+//dijkstra garbage code
+/*void swap_v(V_in_Heap &i_a,V_in_Heap &i_b){
+	swap(v_h_map[i_a.num],v_h_map[i_b.num]);
+	V_in_Heap tmp(i_a);
+    i_a=i_b;
+    i_b=tmp;
+}
+struct BiMiHeap_Dijk{
+    //vector<V_in_Heap> data;
+    V_in_Heap data[MAX_N];
+    int tail;
+    BiMiHeap_Dijk(){
+        //data.push_back(V_in_Heap());
+        tail=1;
+    }
+    BiMiHeap_Dijk(int size_in){
+        //data.reserve(size_in);
+        //data.push_back(V_in_Heap());
+        tail=1;
+    }
+    bool empty(){
+        return tail<=1;
+    }
+    void push(const V_in_Heap &dt_ip){
+        //data.push_back(dt_ip);
+        data[tail]=dt_ip;
+        int i=tail,j;
+        ++tail;
+        while(i>1){
+            j=i>>1;
+            if(data[i]<data[j]){
+                swap_v(data[i],data[j]);
+                i=j;
+            }else{
+                break;
+            }
+        }
+    }
+    V_in_Heap pop(){
+        return pop(1);
+
+    }
+    V_in_Heap pop(int st_p){
+        if(st_p>=tail){
+            return V_in_Heap();
+        }
+        V_in_Heap rt_da(data[st_p]);
+        refresh(st_p,V_in_Heap(data[tail-1]) );
+        --tail;
+        //data.pop_back();
+        return rt_da;
+    }
+    void refresh(int st_p,const V_in_Heap &new_value){
+        data[st_p]=new_value;
+        if(data[st_p]<data[st_p>>1] && (st_p>1)){
+            int j;
+            while(st_p>1){
+                j=st_p>>1;
+                if(data[st_p]<data[j]){
+                    swap_v(data[st_p],data[j]);
+                    st_p>>=1;
+                }else{
+                    break;
+                }
+            }
+        }
+        else{
+            while((st_p<<1)<tail){
+                if( (data[st_p<<1]<data[(st_p<<1)+1]) || ((st_p<<1)==tail-1) ){
+                    if(data[st_p<<1]<data[st_p]){
+                        swap_v(data[st_p<<1],data[st_p]);
+                        st_p<<=1;
+                    }else{
+                        break;
+                    }
+                }else{
+                if(data[(st_p<<1)+1]<data[st_p]){
+                        swap_v(data[(st_p<<1)+1],data[st_p]);
+                        st_p=(st_p<<1)+1;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    void print_test(){
+        for (int i = 0; i < tail+1; ++i){
+            data[i].out();
+        }
+        cout<<endl;
+    }
+    ~BiMiHeap_Dijk(){};
+};
+BiMiHeap_Dijk heap;
+*/
+
+    /*V_in_Heap pop(){
+        if(cnt==0) return V_in_Heap();//返回-MAX_LONG视为错误
+        long p=1;
+        V_in_Heap ans=h[1];
+        V_in_Heap tmp=h[cnt--];//取出堆底元素然
+        long to;
+        while(p<=cnt){//若未到栈底
+            to=-MAX_LONG;//init
+            if(lch(p)<=cnt && tmp>h[lch(p)]){to=lch(p);}//若有左孩子且比取出的栈底元素小
+            if(rch(p)<=cnt && tmp>h[rch(p)] && h[to]>h[rch(p)]){to=rch(p);}//若有右孩子 且 比取出的栈底元素小 且 小于左孩子
+            if(to!=-MAX_LONG) {h[p]=h[to];v_h_map[h[p].num]=p;p=to;}//如果比左右孩子都小，就说明找对位置了，把取出的栈底放上去；否则交换
+            else{h[p]=tmp;v_h_map[tmp.num]=p;break;}
+        }
+        v_h_map[ans.num]=-1;
+        return ans;
+    }
+    V_in_Heap pop(int p) {
+        V_in_Heap ans=h[p];
+        V_in_Heap tmp=h[cnt--];//取出堆底元素然
+        if (p>1 && tmp<h[pre(p)]){
+            while(p>1 && tmp<h[pre(p)]){//若没到堆顶 且 待插入元素大于p的父亲 
+                h[p]=h[pre(p)];//则把p的父亲移到他儿子的地方(就是p的地方)
+                v_h_map[h[p].num]=p;
+                p=pre(p);//p指向它的父亲 
+            }
+            h[p]=tmp;
+            v_h_map[tmp.num]=p;
+        }
+        else{
+            if(cnt<0) return V_in_Heap();//返回-MAX_LONG视为错误
+            long to;
+            while(p<=cnt){//若未到栈底
+                to=-MAX_LONG;//init
+                if(lch(p)<=cnt && tmp>h[lch(p)]){to=lch(p);}//若有左孩子且比取出的栈底元素小
+                if(rch(p)<=cnt && tmp>h[rch(p)] && h[to]>h[rch(p)]){to=rch(p);}//若有右孩子 且 比取出的栈底元素小 且 小于左孩子
+                if(to!=-MAX_LONG) {h[p]=h[to];v_h_map[h[p].num]=p;p=to;}//如果比左右孩子都小，就说明找对位置了，把取出的栈底放上去；否则交换
+                else{h[p]=tmp;v_h_map[tmp.num]=p;break;}
+            }
+        }
+        v_h_map[ans.num]=-1;
+        return ans;
+    }*/
+////////
+/*if (disp[n_i]>d_i) {
+        cerr<<"algorithm error: renewed after distance is fixed\n";
+    }*/
+///////
+/*void check(){
+    for (int i =0; i <=n; ++i){
+        if (v_h_map[i]>=0 && heap.h[v_h_map[i]].num!=i) {
+            cerr<<"error: v_h_map is not correct\n";
+        }
+    }
+}*/
