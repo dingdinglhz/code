@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" >
+      function process () {
+        var urla="foodstore.php";
+        var food=$('#userInput').val();
+        $.ajax({
+            url: urla,
+            data:{food:food},
+            success:function (result) {
+              //alert(result);
+              $('#underInput').html($(result).find("response"));
+            },
+            dataType:"xml"
+        });
+        //console.log("process");
+      }
+    </script>
+  </head>
+  <body onload="process()">
+    <h3>Check Stuffs</h3>
+    <p>Enter the food you would like to order:</p>
+    <input type="text" id="userInput" oninput="process()"/>
+    <div id="underInput"/>
+  </body>
+</html>
+
+ 
