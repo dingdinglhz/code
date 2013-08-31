@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import numpy as np
+import sys
+import getopt
+
 def showSet(x,y,z,cmap,norm):
     plt.pcolormesh(x, y, z, cmap=cmap, norm=norm)
     plt.colorbar()
@@ -35,5 +38,24 @@ def juliaSet(side=4,lx=-2,ly=-2,cx=-0.4,cy=0.6,resolution=400,iteration=10,showS
    
         
 if __name__ == "__main__":
+    side=4
+    (lx,ly)=(-2,-2)
     (cx,cy)=(-0.4,0.6)
-    juliaSet(cx=cx,cy=cy,showStep=5)
+    it=10
+    print(sys.argv)
+    opts,args=getopt.getopt(sys.argv[1:],"s:",["lx=","ly=","cx=","cy=","it="])
+    for(op,value)in opts:
+        if op=="-s":
+            side=float(value)
+        elif op=="--lx":
+            lx=float(value)
+        elif op=="--ly":
+            ly=float(value)
+        elif op=="--cx":
+            cx=float(value)
+        elif op=="--cy":
+            cy=float(value)
+        elif op=="--it":
+            it=int(value)
+        print("op:"+op+" value:"+value)          
+    juliaSet(side,lx,ly,cx,cy,400,it,showStep=0)
