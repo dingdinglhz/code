@@ -44,7 +44,7 @@ if __name__ == '__main__':
         tree.add(tmp.v)
         treeCost+=tmp.distance
         for v in graph[tmp.v]:
-            if(v not in shortestDistance) or (graph[tmp.v][v]<shortestDistance[v]):
+            if(v not in tree)and((v not in shortestDistance) or (graph[tmp.v][v]<shortestDistance[v])):
                 heappush(heap, vertice(v,graph[tmp.v][v]) )
                 shortestDistance[v]=graph[tmp.v][v]
     print(treeCost)

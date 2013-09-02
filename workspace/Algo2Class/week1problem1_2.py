@@ -22,7 +22,7 @@ class job:
         self.key = length / weight
     def __str__(self):
         # return "weight: "+str(self.weight)+" length: "+str(self.length)+" key: "+str(self.key)
-        return "weight: %d length: %d key: %d" % (self.weight, self.length, self.key)
+        return "weight: {0} length: {1} key: {2}".format(self.weight, self.length, self.key)
     def __lt__(self, y):
         if self.key == y.key:
             return self.weight > y.weight
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         time = 0
         result = 0
         for i in jobList:
-            # print(i)
+            print(i)
             time += i.length
             result += i.weight * time;
             # print("time %d result %d"%(time,result))
