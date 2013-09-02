@@ -2,21 +2,22 @@ import sys, os  # @UnusedImport
 from heapq import heappush,heappop
 graph = {}
 tree=set()
-treeEdges=set()
+shortestDistance={}#key:vertice value:shortest distance
 heap=[]
 firstVertice=1
 treeCost=0;
-class edge:
-    def __init__(self,x=0,y=0,cost=0):
-        self.x=x
-        self.y=y
-        self.cost=cost
+class vertice:
+    v=0
+    distance=0
+    def __init__(self,v=0,distance=0):
+        self.v=v
+        self.distance=distance
     def __lt__(self,y):
-        return self.cost<y.cost
+        return self.distance<y.distance
     def __rt__(self,y):
-        return self.cost>y.cost
+        return self.distance>y.distance
     def __str__(self):
-        return "%d - %d cost:%d "%(self.x,self.y,self.cost)
+        return "v: %d dis: %d "%(self.v,self.distance)
 if __name__ == '__main__':
     sys.stdin=open("prim.txt", encoding='utf-8')
     (n, m) =(int(tmp) for tmp in input().split())
@@ -30,21 +31,22 @@ if __name__ == '__main__':
     #print(graph)
     tree.add(firstVertice)
     for v in graph[firstVertice]:
-        heappush(heap, edge(firstVertice,v,graph[firstVertice][v]) )
+        heappush(heap, vertice(v,graph[firstVertice][v]) )
+        shortestDistance[v]=graph[firstVertice][v]
     '''htmp=heap.copy()
     print(len(heap))
     for edgei in range(len(htmp)):
         print(heappop(htmp))'''
     while len(tree)<n:
         tmp=heappop(heap)
-        while ((tmp.x in tree)^(tmp.y in tree))==False:
+        while (tmp.v in tree)or(shortestDistance[tmp.v]<tmp.distance):
             tmp=heappop(heap)
-        tree.add(tmp.y)
-        treeEdges.add(tmp)
-        treeCost+=tmp.cost
-        for v in graph[tmp.y]:
-            heappush(heap, edge(tmp.y,v,graph[tmp.y][v]) )
-        
+        tree.add(tmp.v)
+        treeCost+=tmp.distance
+        for v in graph[tmp.v]:
+            if(v not in shortestDistance) or (graph[tmp.v][v]<shortestDistance[v]):
+                heappush(heap, vertice(v,graph[tmp.v][v]) )
+                shortestDistance[v]=graph[tmp.v][v]
     print(treeCost)
     
 '''
