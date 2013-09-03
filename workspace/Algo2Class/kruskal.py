@@ -4,25 +4,25 @@ treeSize=1
 treeCost=0
 #treeEdges=set()
 class edge:
-    def __init__(self,x=0,y=0,cost=0):
+    def __init__(self,x=0,y=0,cost=0): 
         self.x=x
         self.y=y
         self.cost=cost
-    def __lt__(self,y):
+    def __lt__(self,y):  #operator< definition
         return self.cost<y.cost
-    def __rt__(self,y):
+    def __rt__(self,y):  #operator> definition
         return self.cost>y.cost
-    def __str__(self):
-        return "%d - %d cost:%d "%(self.x,self.y,self.cost)
+    def __str__(self):   #output definition
+        return "{0} - {1} cost:{2} ".format(self.x,self.y,self.cost)
 class disjointSet:
     father=[]
     def __init__(self,size=0):
         self.father=[i for i in range(0,size+1)]
-    def find(self,v):
+    def find(self,v): # find the ancestor of a element v
         if self.father[v]!=v:
             self.father[v]=self.find(self.father[v])
         return self.father[v]
-    def join(self,a,b):
+    def join(self,a,b): # join 2 sets by setting the father of the ancestor of setA into the ancestor of setB
         fatherA=self.find(a)
         fatherB=self.find(b)
         self.father[fatherA]=fatherB
@@ -41,6 +41,7 @@ if __name__ == '__main__':
         if vSet.find(e.x)!=vSet.find(e.y):
             vSet.join(e.x,e.y)
             #treeEdges.add(e)
+            ++treeSize
             treeCost+=e.cost
     #print( treeEdges)
     print(treeCost)

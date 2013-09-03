@@ -7,16 +7,16 @@ heap=[]
 firstVertice=1
 treeCost=0;
 class edge:
-    def __init__(self,x=0,y=0,cost=0):
+    def __init__(self,x=0,y=0,cost=0): 
         self.x=x
         self.y=y
         self.cost=cost
-    def __lt__(self,y):
+    def __lt__(self,y):  #operator< definition
         return self.cost<y.cost
-    def __rt__(self,y):
+    def __rt__(self,y):  #operator> definition
         return self.cost>y.cost
-    def __str__(self):
-        return "%d - %d cost:%d "%(self.x,self.y,self.cost)
+    def __str__(self):   #output definition
+        return "{0} - {1} cost:{2} ".format(self.x,self.y,self.cost)
 if __name__ == '__main__':
     sys.stdin=open("prim.txt", encoding='utf-8')
     (n, m) =(int(tmp) for tmp in input().split())
@@ -31,6 +31,7 @@ if __name__ == '__main__':
     tree.add(firstVertice)
     for v in graph[firstVertice]:
         heappush(heap, edge(firstVertice,v,graph[firstVertice][v]) )
+    #initializing
     '''htmp=heap.copy()
     print(len(heap))
     for edgei in range(len(htmp)):
@@ -44,7 +45,6 @@ if __name__ == '__main__':
         treeCost+=tmp.cost
         for v in graph[tmp.y]:
             heappush(heap, edge(tmp.y,v,graph[tmp.y][v]) )
-        
     print(treeCost)
     
 '''
