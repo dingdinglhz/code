@@ -15,17 +15,26 @@ class edge:
     def __str__(self):   #output definition
         return "{0} - {1} cost:{2} ".format(self.x,self.y,self.cost)
 class disjointSet:
-    father=[]
+    _father=[]
+    _rank=[]
     def __init__(self,size=0):
-        self.father=[i for i in range(0,size+1)]
+        self._father=[i for i in range(0,size+1)]
+        self._rank=[0 for i in range(0,size+1)]
     def find(self,v): # find the ancestor of a element v
-        if self.father[v]!=v:
-            self.father[v]=self.find(self.father[v])
-        return self.father[v]
+        if self._father[v]!=v:
+            self._father[v]=self.find(self._father[v])
+        return self._father[v]
     def join(self,a,b): # join 2 sets by setting the father of the ancestor of setA into the ancestor of setB
         fatherA=self.find(a)
         fatherB=self.find(b)
-        self.father[fatherA]=fatherB
+        #maintaining the rank(deepest node) during union operation
+        if self._rank[fatherA]==self._rank[fatherB]: 
+            self._father[fatherA]=fatherB
+            self._rank[fatherB]+=1
+        elif self._rank[fatherA]<self._rank[fatherB]:
+            self._father[fatherA]=fatherB
+        elif self._rank[fatherA]>self._rank[fatherB]:
+            self._father[fatherB]=fatherA
 if __name__ == '__main__':
     sys.stdin=open("prim.txt", encoding='utf-8')
     (n, m) =(int(tmp) for tmp in input().split())
@@ -41,7 +50,7 @@ if __name__ == '__main__':
         if vSet.find(e.x)!=vSet.find(e.y):
             vSet.join(e.x,e.y)
             #treeEdges.add(e)
-            ++treeSize
+            treeSize+=1
             treeCost+=e.cost
     #print( treeEdges)
     print(treeCost)
