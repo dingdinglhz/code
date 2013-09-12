@@ -14,8 +14,6 @@ class edge:
     def __str__(self):   #output definition
         return "{0} - {1} cost:{2} ".format(self.x,self.y,self.cost)
 class disjointSet:
-    _father=[]
-    _rank=[]
     def __init__(self,size=0):
         self._father=[i for i in range(0,size+1)]
         self._rank=[0 for i in range(0,size+1)]
