@@ -1,4 +1,5 @@
 import sys,os  # @UnusedImport
+import threading
 maxV={}
 w=list()
 v=list()
@@ -14,6 +15,8 @@ def calMaxV(i,j): # i is the number of items, j is the size of the bag
     #print("exist{0},{1}:{2}".format(i,j,maxV))
     return maxV[i][j]
 if __name__ == '__main__':
+    threading.stack_size(67108864)
+    sys.setrecursionlimit(20000)
     sys.stdin=open("knapsack_big.txt", encoding='utf-8')
     (size,n)=(int(tmp) for tmp in input().split())
     w=[0 for i in range(n+1)]

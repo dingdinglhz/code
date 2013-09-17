@@ -1,6 +1,6 @@
 import sys,os  # @UnusedImport
 if __name__ == '__main__':
-    #sys.stdin=open("knapsack1.txt", encoding='utf-8')
+    sys.stdin=open("knapsack_big.txt", encoding='utf-8')
     w=list()
     v=list()
     (size,n)=(int(tmp) for tmp in input().split())
@@ -15,7 +15,7 @@ if __name__ == '__main__':
         for j in range(w[i],size+1):
             maxV[i&1][j]=max(maxV[(i-1)&1][j-w[i]]+v[i],maxV[(i-1)&1][j])
         print("item {0} finished:{1}".format(i,maxV[i&1][size]))
-        print(maxV)
+        #print(maxV)
     print(maxV[(n-1)&1][size])
 '''
 Small Case
