@@ -38,7 +38,7 @@ if __name__ == '__main__':
         heappush(heap, vertice(v,graph[sourceV][v]) )
         shortestDistance[v]=graph[sourceV][v]
         formerVertice[v]=sourceV
-    while len(explored)<n:
+    while len(explored)<n and len(heap)>0:
         tmp=heappop(heap)
         while (tmp.v in explored)or(shortestDistance[tmp.v]<tmp.distance):
             tmp=heappop(heap)
