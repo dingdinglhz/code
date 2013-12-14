@@ -132,6 +132,20 @@ public class SurvivorAssignment {
 		System.out.println(list.head.name);
 		//print the name of the winner, the only node in "list"
 	}
+	String summaryString(){
+		String dataOut="";
+		dataOut+="List of Original Contesters:";
+		SurvivorNode i=bklist.head;
+		while(true){
+			dataOut+="\n"+i.name;
+			i=i.next;
+			if(i==bklist.head){break;}
+		}//scan each nodes in the "bklist" and output there names as the list
+		//of original contesters. Similar process as in method"backup()".
+		dataOut+="\n"+"The Winner:";
+		dataOut+="\n"+list.head.name+"\n";
+		return dataOut;
+	}
 	public void display(){//for debugging use, similar to "summary()"
 		System.out.println("list :");
 		SurvivorNode i=list.head;
@@ -150,6 +164,12 @@ public class SurvivorAssignment {
 		}
 		System.out.println();
 	}
+	public boolean delete(String dataIn){
+		return list.delete(dataIn);
+	}
+	public boolean hasWinner(){
+		return list.head==list.tail;
+	}
 	public static void main(String[] args) {//main method;
 		SurvivorAssignment survivor=new SurvivorAssignment();
 		Scanner scan=new Scanner(System.in);//create a scanner using stdin.
@@ -162,3 +182,14 @@ public class SurvivorAssignment {
 		survivor.summary();//summary process.
 	}
 }
+/*
+Galilei
+Newton
+Bohr
+Einstein
+Maxwell
+Boltzmann
+Schrodinger
+Feynman
+fin
+*/
