@@ -10,6 +10,10 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QDebug>
+
+#include <fstream>
+using std::ifstream;
+#include "chemicaldatabase.h"
 namespace Ui {
 class MainWindow;
 }
@@ -34,6 +38,8 @@ private:
     double temperature;
     static const double KELVIN_CONSTANT=273.15;
     void displayTemperature();
+    ChemicalDataBase dataBase;
+    void initialize();
 };
 
 #endif // MAINWINDOW_H

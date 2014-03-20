@@ -3,6 +3,7 @@
 #include <map>
 #include <cstring>
 #include <fstream>
+#include <iostream>
 #include "chemicaldataentry.h"
 using namespace std;
 
@@ -14,7 +15,7 @@ public:
     ChemicalDataEntry getChemicalByFormula(const string &formula);
     bool addChemical(const string &formula,const ChemicalDataEntry &data);
     bool deleteChemical(const string &formula);
-    void readFromFile(ifstream in);
+    void readFromFile(ifstream &in);
 };
 
 

@@ -30,11 +30,15 @@ bool ChemicalDataBase::deleteChemical(const string &formula){
     }
 }
 
-void ChemicalDataBase::readFromFile(ifstream in){
+void ChemicalDataBase::readFromFile(ifstream &in){
     string formula;
     double enthalpy,entropy;
     while(!in.eof()){
         in>>formula>>enthalpy>>entropy;
         addChemical(formula,ChemicalDataEntry(enthalpy,entropy));
     }
+    /*for (std::map<string,ChemicalDataEntry>::iterator it=dataBase.begin(); it!=dataBase.end(); ++it){
+        cout<<(it->first)<<" "<<(it->second.getEnthalpy())<<" "<<(it->second.getEntropy())
+           <<" "<<(it->second.getGibbsFreeEnergy(100))<<endl;
+    }*/
 }

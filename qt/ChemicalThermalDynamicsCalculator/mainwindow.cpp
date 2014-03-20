@@ -13,13 +13,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonBox,&QDialogButtonBox::helpRequested,this,&MainWindow::displayHelp);
     connect(ui->buttonBox,&QDialogButtonBox::rejected,ui->equationTextEdit,&QTextEdit::clear);
 
-    temperature=KELVIN_CONSTANT;
-    displayTemperature();
+    initialize();
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::initialize(){
+    temperature=KELVIN_CONSTANT;
+    displayTemperature();
+    ifstream inf("chemicalData.txt", ifstream::in);
+    //inf.open();
+    if(inf.is_open()){
+        dataBase.readFromFile(inf);
+        qDebug()<<"open data file";
+
+    }else{
+        QMessageBox::warning(this,"No valid chemical data base!",
+                             "Please enter chemical thermodynamics data in \"chemicalData.txt\" !");
+    }
 }
 
 void MainWindow::displayTemperature(){
@@ -62,8 +77,10 @@ void MainWindow::setTemperature(){
 }
 
 void MainWindow::startCalculation(){
-    ResultDialog *dialog=new ResultDialog(this,ui->equationTextEdit->toPlainText());
+    ResultDialog *dialog=new ResultDialog(this);
     dialog->show();
+    dialog->setup(ui->equationTextEdit->toPlainText(),dataBase,temperature);
+
 }
 
 void MainWindow::displayHelp(){
