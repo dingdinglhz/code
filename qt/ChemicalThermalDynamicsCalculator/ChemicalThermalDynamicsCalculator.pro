@@ -14,10 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    resultdialog.cpp
+    resultdialog.cpp \
+    chemicaldatabase.cpp
 
 HEADERS  += mainwindow.h \
-    resultdialog.h
+    resultdialog.h \
+    chemicaldatabase.h \
+    chemicaldataentry.h
 
 FORMS    += mainwindow.ui \
     resultdialog.ui

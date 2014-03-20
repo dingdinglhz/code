@@ -1,13 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QString>
-#include <QTextEdit>
-#include <QLabel>
-#include <QDialogButtonBox>
-#include <QInputDialog>
-#include <QMessageBox>
-#include <QAction>
-#include <QDebug>
+#include "resultdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -69,7 +62,8 @@ void MainWindow::setTemperature(){
 }
 
 void MainWindow::startCalculation(){
-
+    ResultDialog *dialog=new ResultDialog(this,ui->equationTextEdit->toPlainText());
+    dialog->show();
 }
 
 void MainWindow::displayHelp(){
