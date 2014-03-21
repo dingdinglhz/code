@@ -5,7 +5,9 @@
 #include <fstream>
 #include <iostream>
 #include "chemicaldataentry.h"
-using namespace std;
+using std::string;
+using std::ifstream;
+using std::map;
 
 class ChemicalDataBase
 {

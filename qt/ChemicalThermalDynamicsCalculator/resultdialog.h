@@ -30,7 +30,7 @@ private:
     ChemicalDataBase *dataBase;
     double temperature;
     void calculation();
-    bool getCoefficient(const QString &formula,String &formulaS,int &coefficient);
+    bool getCoefficient(const QString &formula,string &formulaS,int &coefficient);
 };
 
 #endif // RESULTDIALOG_H
