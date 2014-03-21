@@ -10,12 +10,14 @@ using namespace std;
 class ChemicalDataBase
 {
     map<string,ChemicalDataEntry> dataBase;
+    double tempAtMeasure;
 public:
-    ChemicalDataBase();
+    ChemicalDataBase(double tempAtMeasure=0);
     ChemicalDataEntry getChemicalByFormula(const string &formula);
     bool addChemical(const string &formula,const ChemicalDataEntry &data);
     bool deleteChemical(const string &formula);
     void readFromFile(ifstream &in);
+    bool getDataByFormula(const string &formula,const double &temperature,double &enthalpy,double &entropy,double &gibbs);
 };
 
 

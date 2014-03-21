@@ -3,15 +3,16 @@
 #include <cstring>
 class ChemicalDataEntry
 {
-    double enthalpy,entropy;
+    double enthalpy,entropy,gibbs;//units: kJ/mol J/mol*K kJ/mol
 public:
     ChemicalDataEntry(){
     }
 
-    ChemicalDataEntry(const double &enthalpy,const double &entropy)
+    ChemicalDataEntry(const double &enthalpy,const double &entropy,const double &gibbs)
     {
         this->enthalpy=enthalpy;
         this->entropy=entropy;
+        this->gibbs=gibbs;
     }
     void setEnthalpy(const double &enthalpy){
         this->enthalpy=enthalpy;
@@ -25,8 +26,8 @@ public:
     double getEntropy(){
         return entropy;
     }
-    double getGibbsFreeEnergy(const double &temperature){
-        return enthalpy*1000-entropy*temperature;
+    double getGibbsFreeEnergy(const double &temperature,const double &tempAtMeasure=0){
+        return gibbs-entropy*(temperature-tempAtMeasure)/1000;
     }
 };
 #endif // CHEMICALDATAENTRY_H

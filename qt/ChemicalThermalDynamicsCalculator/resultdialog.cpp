@@ -23,6 +23,10 @@ void ResultDialog::setup(QString equation, ChemicalDataBase &dataBase, double te
     calculation();
 }
 
+bool ResultDialog::getCoefficient(const QString &formula,String &formulaS,int &coefficient){
+
+}
+
 void ResultDialog::calculation(){
     QStringList sides=equation.remove(' ').remove('\n').split('=');
     if(sides.size()<2){
@@ -35,31 +39,30 @@ void ResultDialog::calculation(){
     double enthalpyR=0,enthalpyP=0,entropyR=0,entropyP=0,gibbsR=0,gibbsP=0;
 
     foreach(QString formula,reactants){
-        ChemicalDataEntry chemical=dataBase->getChemicalByFormula(formula.toStdString());
-        qDebug()<<formula<<" "<<chemical.getEnthalpy()<<" "<<chemical.getEntropy()
-           <<" "<<chemical.getGibbsFreeEnergy(temperature)<<endl;
-        enthalpyR+=chemical.getEnthalpy();
-        entropyR+=chemical.getEntropy();
-        gibbsR+=chemical.getGibbsFreeEnergy(temperature);
+        double enthalpy,entropy,gibbs;
+        dataBase->getDataByFormula(formula.toStdString(),temperature,enthalpy,entropy,gibbs);
+        enthalpyR+=enthalpy;
+        entropyR+=entropy;
+        gibbsR+=gibbs;
     }
     foreach(QString formula,products){
-        ChemicalDataEntry chemical=dataBase->getChemicalByFormula(formula.toStdString());
-        qDebug()<<formula<<" "<<chemical.getEnthalpy()<<" "<<chemical.getEntropy()
-           <<" "<<chemical.getGibbsFreeEnergy(temperature)<<endl;
-        enthalpyP+=chemical.getEnthalpy();
-        entropyP+=chemical.getEntropy();
-        gibbsP+=chemical.getGibbsFreeEnergy(temperature);
+        double enthalpy,entropy,gibbs;
+        dataBase->getDataByFormula(formula.toStdString(),temperature,enthalpy,entropy,gibbs);
+        enthalpyP+=enthalpy;
+        entropyP+=entropy;
+        gibbsP+=gibbs;
     }
     QString result=QString()+"Final Result:\nTotal enthalpy change:"
             +QString::number(enthalpyP-enthalpyR)+"kJ/mol \nTotal entropy change:"
-            +QString::number(entropyP-entropyR)+"kJ/mol*K \nTotal gibbs free energy change:"
-            +QString::number((gibbsP-gibbsR)/1000)+"kJ/mol\n";
+            +QString::number(entropyP-entropyR)+"J/mol*K \nTotal gibbs free energy change:"
+            +QString::number(gibbsP-gibbsR)+"kJ/mol\n";
     if(enthalpyP>enthalpyR){result+=" -endothermic reaction- ";}
-    else{result+=" -exothermic reaction- ";}
-    if(entropyP>entropyR){result+=" -entropy increase- ";}
-    else{result+=" -entropy decrease- ";}
-    if(gibbsP>gibbsR){result+=" -non spontaneous- ";}
-    else{result+=" -spontaneous- ";}
+    else{result+=" -exothermic reaction- /n";}
+    if(entropyP>entropyR){result+=" -entropy increase- /n";}
+    else{result+=" -entropy decrease- /n";}
+    if(gibbsP>gibbsR){result+=" -non spontaneous- /n";}
+    else{result+=" -spontaneous- /n";}
     ui->resultLabel->setText(result);
 
 }
+//test equation: Ca+Cl2=CaCl2
