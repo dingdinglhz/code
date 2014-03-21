@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SurvivorAssignment.java</title>
+<style type="text/css">
+body.hl	{ background-color:#f9f5f9; }
+pre.hl	{ color:#000000; background-color:#f9f5f9; font-size:12pt; font-family:'Consolas';}
+.hl.num { color:#00c226; }
+.hl.esc { color:#d66ad5; }
+.hl.str { color:#b91f49; }
+.hl.pps { color:#b91f49; }
+.hl.slc { color:#3f6b5b; }
+.hl.com { color:#3f6b5b; }
+.hl.ppc { color:#000000; }
+.hl.opt { color:#000000; }
+.hl.ipl { color:#8a70d6; }
+.hl.lin { color:#3f6b5b; }
+.hl.kwa { color:#f06f00; }
+.hl.kwb { color:#0000ff; }
+.hl.kwc { color:#08f000; font-weight:bold; }
+.hl.kwd { color:#e800f0; }
+</style>
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl lin">001 </span><span class="hl com">/*--------------------------------------------------------------------------------------*/</span>
+<span class="hl lin">002 </span><span class="hl com">/*  SurvivorAssignment.java                                                             */</span>
+<span class="hl lin">003 </span><span class="hl com">/*  This program simulate the TV show Survivor. It stores contesters in a liked list. It*/</span>
+<span class="hl lin">004 </span><span class="hl com">/*  has the following processed:Input, Backup, elimination and summary.                 */</span>
+<span class="hl lin">005 </span><span class="hl com">/*--------------------------------------------------------------------------------------*/</span>
+<span class="hl lin">006 </span><span class="hl com">/*  Author: Hanzhen Lin                                                                 */</span>
+<span class="hl lin">007 </span><span class="hl com">/*  Date:   2013,Dec,10                                                                 */</span>
+<span class="hl lin">008 </span><span class="hl com">/*--------------------------------------------------------------------------------------*/</span>
+<span class="hl lin">009 </span><span class="hl com">/*  Input:User input from standard input containing a list of original contesters and   */</span>
+<span class="hl lin">010 </span><span class="hl com">/*  contesters to eliminate.                                                            */</span>
+<span class="hl lin">011 </span><span class="hl com">/*  Output: Response of the processes (whether it is successful or not, and the summary */</span>
+<span class="hl lin">012 </span><span class="hl com">/*  of original contesters and the winner.                                              */</span>
+<span class="hl lin">013 </span><span class="hl com">/*--------------------------------------------------------------------------------------*/</span>
+<span class="hl lin">014 </span><span class="hl kwa">import</span> java<span class="hl opt">.</span>util<span class="hl opt">.</span>Scanner<span class="hl opt">;</span><span class="hl slc">//Import Scanner for input</span>
+<span class="hl lin">015 </span>
+<span class="hl lin">016 </span><span class="hl kwa">class</span> SurvivorNode<span class="hl opt">{</span><span class="hl slc">//The class for nodes in the liked list.</span>
+<span class="hl lin">017 </span>	String name<span class="hl opt">;</span>  <span class="hl slc">//The name of the contester.</span>
+<span class="hl lin">018 </span>	SurvivorNode next<span class="hl opt">;</span>
+<span class="hl lin">019 </span>	<span class="hl slc">//The next node that this node points to</span>
+<span class="hl lin">020 </span>	<span class="hl kwd">SurvivorNode</span> <span class="hl opt">(</span>String nameIn<span class="hl opt">){</span>
+<span class="hl lin">021 </span>	<span class="hl slc">//Initializer for the node. It generates nodes according </span>
+<span class="hl lin">022 </span>	<span class="hl slc">//to the name provided in the parameter.</span>
+<span class="hl lin">023 </span>		name<span class="hl opt">=</span>nameIn<span class="hl opt">;</span>
+<span class="hl lin">024 </span>		next<span class="hl opt">=</span>null<span class="hl opt">;</span>
+<span class="hl lin">025 </span>	<span class="hl opt">}</span>
+<span class="hl lin">026 </span><span class="hl opt">}</span>
+<span class="hl lin">027 </span>
+<span class="hl lin">028 </span><span class="hl kwa">class</span> SurvivorList<span class="hl opt">{</span>
+<span class="hl lin">029 </span><span class="hl slc">//The class that stores a cyclic linked list. The head &amp; tail of the list</span>
+<span class="hl lin">030 </span><span class="hl slc">//in maintained and the next node of tail always points to the head.</span>
+<span class="hl lin">031 </span>	SurvivorNode head<span class="hl opt">;</span>
+<span class="hl lin">032 </span>	SurvivorNode tail<span class="hl opt">;</span>
+<span class="hl lin">033 </span>	<span class="hl kwd">SurvivorList</span><span class="hl opt">(){</span>
+<span class="hl lin">034 </span>		head<span class="hl opt">=</span>null<span class="hl opt">;</span>
+<span class="hl lin">035 </span>		tail<span class="hl opt">=</span>null<span class="hl opt">;</span>
+<span class="hl lin">036 </span>	<span class="hl opt">}</span>
+<span class="hl lin">037 </span>	<span class="hl kwb">void</span> <span class="hl kwd">add</span><span class="hl opt">(</span>String dataIn<span class="hl opt">){</span>
+<span class="hl lin">038 </span>	<span class="hl slc">//this method adds one node to the liked list.</span>
+<span class="hl lin">039 </span>		<span class="hl kwa">if</span><span class="hl opt">(</span>tail<span class="hl opt">!=</span>null<span class="hl opt">){</span>
+<span class="hl lin">040 </span>		<span class="hl slc">//if it is not the first node in the list, append</span>
+<span class="hl lin">041 </span>		<span class="hl slc">//new node after the tail and update the new tail</span>
+<span class="hl lin">042 </span>			tail<span class="hl opt">.</span>next<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">SurvivorNode</span><span class="hl opt">(</span>dataIn<span class="hl opt">);</span>
+<span class="hl lin">043 </span>			tail<span class="hl opt">=</span>tail<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">044 </span>			tail<span class="hl opt">.</span>next<span class="hl opt">=</span>head<span class="hl opt">;</span>
+<span class="hl lin">045 </span>		<span class="hl opt">}</span>
+<span class="hl lin">046 </span>		<span class="hl kwa">else</span><span class="hl opt">{</span>
+<span class="hl lin">047 </span>		<span class="hl slc">//else, create a new node which is both head and tail.</span>
+<span class="hl lin">048 </span>			head<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">SurvivorNode</span><span class="hl opt">(</span>dataIn<span class="hl opt">);</span>
+<span class="hl lin">049 </span>			head<span class="hl opt">.</span>next<span class="hl opt">=</span>head<span class="hl opt">;</span>
+<span class="hl lin">050 </span>			tail<span class="hl opt">=</span>head<span class="hl opt">;</span>
+<span class="hl lin">051 </span>		<span class="hl opt">}</span>
+<span class="hl lin">052 </span>	<span class="hl opt">}</span>
+<span class="hl lin">053 </span>	<span class="hl kwb">boolean</span> <span class="hl kwd">delete</span><span class="hl opt">(</span>String dataIn<span class="hl opt">){</span>
+<span class="hl lin">054 </span>		<span class="hl slc">//this method deletes one node from the liked list.</span>
+<span class="hl lin">055 </span>		SurvivorNode i<span class="hl opt">=</span>head<span class="hl opt">,</span>j<span class="hl opt">=</span>tail<span class="hl opt">;</span><span class="hl slc">//tail is the previous node of head.</span>
+<span class="hl lin">056 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>true<span class="hl opt">){</span>
+<span class="hl lin">057 </span>		<span class="hl slc">//scan each node in the list. If there is such node,make the</span>
+<span class="hl lin">058 </span>		<span class="hl slc">//previous node points to the node after current node to delete.</span>
+<span class="hl lin">059 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">.</span>name<span class="hl opt">.</span><span class="hl kwd">equals</span><span class="hl opt">(</span>dataIn<span class="hl opt">)){</span>
+<span class="hl lin">060 </span>				<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>head<span class="hl opt">){</span>head<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;}</span>
+<span class="hl lin">061 </span>				<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>tail<span class="hl opt">){</span>tail<span class="hl opt">=</span>j<span class="hl opt">;}</span>
+<span class="hl lin">062 </span>				j<span class="hl opt">.</span>next<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">063 </span>				<span class="hl kwa">return</span> true<span class="hl opt">;</span><span class="hl slc">//return true if the deletion is successful.</span>
+<span class="hl lin">064 </span>			<span class="hl opt">}</span>
+<span class="hl lin">065 </span>			i<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span> j<span class="hl opt">=</span>j<span class="hl opt">.</span>next<span class="hl opt">;</span><span class="hl slc">//j is maintained as the previous node of i.</span>
+<span class="hl lin">066 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>head<span class="hl opt">){</span><span class="hl kwa">break</span><span class="hl opt">;}</span>
+<span class="hl lin">067 </span>		<span class="hl slc">//if i equals head, all nodes have been visited, quit the loop.</span>
+<span class="hl lin">068 </span>		<span class="hl opt">}</span>
+<span class="hl lin">069 </span>		<span class="hl kwa">return</span> false<span class="hl opt">;</span><span class="hl slc">//return false if the node is not in the list.</span>
+<span class="hl lin">070 </span>	<span class="hl opt">}</span>
+<span class="hl lin">071 </span><span class="hl opt">}</span>
+<span class="hl lin">072 </span>
+<span class="hl lin">073 </span><span class="hl kwa">public class</span> SurvivorAssignment <span class="hl opt">{</span>
+<span class="hl lin">074 </span><span class="hl slc">//The major class of this file, which deal with the processes in the game. </span>
+<span class="hl lin">075 </span>	SurvivorList list<span class="hl opt">,</span>bklist<span class="hl opt">;</span><span class="hl slc">//&quot;list&quot; is The list of current survivors </span>
+<span class="hl lin">076 </span>	<span class="hl slc">//and the &quot;bklist&quot; is the backup list of original contesters.</span>
+<span class="hl lin">077 </span>	<span class="hl kwa">public</span> <span class="hl kwb">void</span> <span class="hl kwd">input</span><span class="hl opt">(</span>Scanner scan<span class="hl opt">){</span>
+<span class="hl lin">078 </span>	<span class="hl slc">//Deals with user input. It adds nodes to &quot;list&quot; using names received.</span>
+<span class="hl lin">079 </span>		list<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">SurvivorList</span><span class="hl opt">();</span>
+<span class="hl lin">080 </span>		String name<span class="hl opt">;</span>
+<span class="hl lin">081 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>scan<span class="hl opt">.</span><span class="hl kwd">hasNext</span><span class="hl opt">()){</span><span class="hl slc">//if there is no string left, terminate loop.</span>
+<span class="hl lin">082 </span>			name<span class="hl opt">=</span>scan<span class="hl opt">.</span><span class="hl kwd">next</span><span class="hl opt">();</span><span class="hl slc">//input a string</span>
+<span class="hl lin">083 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>name<span class="hl opt">.</span><span class="hl kwd">equals</span><span class="hl opt">(</span><span class="hl str">&quot;fin&quot;</span><span class="hl opt">)){</span>
+<span class="hl lin">084 </span>				<span class="hl kwa">return</span><span class="hl opt">;</span><span class="hl slc">//&quot;fin&quot; indicates the end of the List, so it ends.</span>
+<span class="hl lin">085 </span>			<span class="hl opt">}</span>
+<span class="hl lin">086 </span>			list<span class="hl opt">.</span><span class="hl kwd">add</span><span class="hl opt">(</span>name<span class="hl opt">);</span><span class="hl slc">//adds nodes to &quot;list&quot; using names received</span>
+<span class="hl lin">087 </span>		<span class="hl opt">}</span>
+<span class="hl lin">088 </span>	<span class="hl opt">}</span>
+<span class="hl lin">089 </span>	<span class="hl kwa">public</span> <span class="hl kwb">void</span> <span class="hl kwd">backUp</span><span class="hl opt">(){</span>
+<span class="hl lin">090 </span>	<span class="hl slc">//This method deals with the backup process. It scans each nodes in </span>
+<span class="hl lin">091 </span>	<span class="hl slc">//&quot;list&quot; and add those nodes into &quot;bklist&quot;</span>
+<span class="hl lin">092 </span>		bklist<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">SurvivorList</span><span class="hl opt">();</span>
+<span class="hl lin">093 </span>		SurvivorNode i<span class="hl opt">=</span>list<span class="hl opt">.</span>head<span class="hl opt">;</span><span class="hl slc">//i visits each node in the list.</span>
+<span class="hl lin">094 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>true<span class="hl opt">){</span>
+<span class="hl lin">095 </span>			bklist<span class="hl opt">.</span><span class="hl kwd">add</span><span class="hl opt">(</span>i<span class="hl opt">.</span>name<span class="hl opt">);</span>
+<span class="hl lin">096 </span>			i<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">097 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>list<span class="hl opt">.</span>head<span class="hl opt">){</span><span class="hl kwa">break</span><span class="hl opt">;}</span><span class="hl slc">//if i equals the head of </span>
+<span class="hl lin">098 </span>		<span class="hl slc">//list, all nodes have been visited, terminates the loop.</span>
+<span class="hl lin">099 </span>		<span class="hl opt">}</span>
+<span class="hl lin">100 </span>	<span class="hl opt">}</span>
+<span class="hl lin">101 </span>	<span class="hl kwa">public</span> <span class="hl kwb">void</span> <span class="hl kwd">elimination</span><span class="hl opt">(</span>Scanner scan<span class="hl opt">){</span>
+<span class="hl lin">102 </span>	<span class="hl slc">//this method deals with the elimination process.</span>
+<span class="hl lin">103 </span>		String name<span class="hl opt">;</span>
+<span class="hl lin">104 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>scan<span class="hl opt">.</span><span class="hl kwd">hasNext</span><span class="hl opt">() &amp;&amp;</span> list<span class="hl opt">.</span>head<span class="hl opt">!=</span>list<span class="hl opt">.</span>tail<span class="hl opt">){</span>
+<span class="hl lin">105 </span>		<span class="hl slc">//if there is no string left or there is only one node left </span>
+<span class="hl lin">106 </span>		<span class="hl slc">//in the list indicated by head==tail, stop the loop.</span>
+<span class="hl lin">107 </span>			name<span class="hl opt">=</span>scan<span class="hl opt">.</span><span class="hl kwd">next</span><span class="hl opt">();</span><span class="hl slc">//input a string</span>
+<span class="hl lin">108 </span>			<span class="hl kwa">if</span><span class="hl opt">( !</span>list<span class="hl opt">.</span><span class="hl kwd">delete</span><span class="hl opt">(</span>name<span class="hl opt">) ){</span><span class="hl slc">//if deletion fails, notifies the user.</span>
+<span class="hl lin">109 </span>				System<span class="hl opt">.</span>out<span class="hl opt">.</span>println
+<span class="hl lin">110 </span>				<span class="hl opt">(</span><span class="hl str">&quot;Deletion is not successful, please &quot;</span> <span class="hl opt">+</span>
+<span class="hl lin">111 </span>						<span class="hl str">&quot;check if the name is correct!&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">112 </span>			<span class="hl opt">}</span>
+<span class="hl lin">113 </span>			<span class="hl kwa">else</span><span class="hl opt">{</span><span class="hl slc">//if deletion is successful, tells the user as well.</span>
+<span class="hl lin">114 </span>				System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;The Contestor &quot;</span> <span class="hl opt">+</span>
+<span class="hl lin">115 </span>						<span class="hl str">&quot;is eliminated successfully&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">116 </span>			<span class="hl opt">}</span>
+<span class="hl lin">117 </span>			<span class="hl slc">//display(); for debugging.</span>
+<span class="hl lin">118 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>list<span class="hl opt">.</span>head<span class="hl opt">==</span>list<span class="hl opt">.</span>tail<span class="hl opt">){</span><span class="hl kwa">return</span><span class="hl opt">;}</span>
+<span class="hl lin">119 </span>			<span class="hl slc">//if there is only one node left, terminates the method.</span>
+<span class="hl lin">120 </span>		<span class="hl opt">}</span>
+<span class="hl lin">121 </span>	<span class="hl opt">}</span>
+<span class="hl lin">122 </span>	<span class="hl kwa">public</span> <span class="hl kwb">void</span> <span class="hl kwd">summary</span><span class="hl opt">(){</span><span class="hl slc">//summary process, which prints the final result.</span>
+<span class="hl lin">123 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;List of Original Contesters:&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">124 </span>		SurvivorNode i<span class="hl opt">=</span>bklist<span class="hl opt">.</span>head<span class="hl opt">;</span>
+<span class="hl lin">125 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>true<span class="hl opt">){</span>
+<span class="hl lin">126 </span>			System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span>i<span class="hl opt">.</span>name<span class="hl opt">);</span>
+<span class="hl lin">127 </span>			i<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">128 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>bklist<span class="hl opt">.</span>head<span class="hl opt">){</span><span class="hl kwa">break</span><span class="hl opt">;}</span>
+<span class="hl lin">129 </span>		<span class="hl opt">}</span><span class="hl slc">//scan each nodes in the &quot;bklist&quot; and output there names as the list</span>
+<span class="hl lin">130 </span>		<span class="hl slc">//of original contesters. Similar process as in method&quot;backup()&quot;.</span>
+<span class="hl lin">131 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;The Winner:&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">132 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span>list<span class="hl opt">.</span>head<span class="hl opt">.</span>name<span class="hl opt">);</span>
+<span class="hl lin">133 </span>		<span class="hl slc">//print the name of the winner, the only node in &quot;list&quot;</span>
+<span class="hl lin">134 </span>	<span class="hl opt">}</span>
+<span class="hl lin">135 </span>	<span class="hl kwa">public</span> <span class="hl kwb">void</span> <span class="hl kwd">display</span><span class="hl opt">(){</span><span class="hl slc">//for debugging use, similar to &quot;summary()&quot;</span>
+<span class="hl lin">136 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;list :&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">137 </span>		SurvivorNode i<span class="hl opt">=</span>list<span class="hl opt">.</span>head<span class="hl opt">;</span>
+<span class="hl lin">138 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>true<span class="hl opt">){</span>
+<span class="hl lin">139 </span>			System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">print</span><span class="hl opt">(</span>i<span class="hl opt">.</span>name<span class="hl opt">+</span><span class="hl str">&quot; &quot;</span><span class="hl opt">);</span>
+<span class="hl lin">140 </span>			i<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">141 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>list<span class="hl opt">.</span>head<span class="hl opt">){</span><span class="hl kwa">break</span><span class="hl opt">;}</span>
+<span class="hl lin">142 </span>		<span class="hl opt">}</span>
+<span class="hl lin">143 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">();</span>
+<span class="hl lin">144 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;bklist :&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">145 </span>		i<span class="hl opt">=</span>bklist<span class="hl opt">.</span>head<span class="hl opt">;</span>
+<span class="hl lin">146 </span>		<span class="hl kwa">while</span><span class="hl opt">(</span>true<span class="hl opt">){</span>
+<span class="hl lin">147 </span>			System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">print</span><span class="hl opt">(</span>i<span class="hl opt">.</span>name<span class="hl opt">+</span><span class="hl str">&quot; &quot;</span><span class="hl opt">);</span>
+<span class="hl lin">148 </span>			i<span class="hl opt">=</span>i<span class="hl opt">.</span>next<span class="hl opt">;</span>
+<span class="hl lin">149 </span>			<span class="hl kwa">if</span><span class="hl opt">(</span>i<span class="hl opt">==</span>bklist<span class="hl opt">.</span>head<span class="hl opt">){</span><span class="hl kwa">break</span><span class="hl opt">;}</span>
+<span class="hl lin">150 </span>		<span class="hl opt">}</span>
+<span class="hl lin">151 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">();</span>
+<span class="hl lin">152 </span>	<span class="hl opt">}</span>
+<span class="hl lin">153 </span>	<span class="hl kwa">public static</span> <span class="hl kwb">void</span> <span class="hl kwd">main</span><span class="hl opt">(</span>String<span class="hl opt">[]</span> args<span class="hl opt">) {</span><span class="hl slc">//main method;</span>
+<span class="hl lin">154 </span>		SurvivorAssignment survivor<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">SurvivorAssignment</span><span class="hl opt">();</span>
+<span class="hl lin">155 </span>		Scanner scan<span class="hl opt">=</span><span class="hl kwa">new</span> <span class="hl kwd">Scanner</span><span class="hl opt">(</span>System<span class="hl opt">.</span><span class="hl kwa">in</span><span class="hl opt">);</span><span class="hl slc">//create a scanner using stdin.</span>
+<span class="hl lin">156 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;Enter the name of contesters:&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">157 </span>		survivor<span class="hl opt">.</span><span class="hl kwd">input</span><span class="hl opt">(</span>scan<span class="hl opt">);</span><span class="hl slc">//input process</span>
+<span class="hl lin">158 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;Input is processed Successfully&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">159 </span>		survivor<span class="hl opt">.</span><span class="hl kwd">backUp</span><span class="hl opt">();</span><span class="hl slc">//backup process</span>
+<span class="hl lin">160 </span>		System<span class="hl opt">.</span>out<span class="hl opt">.</span><span class="hl kwd">println</span><span class="hl opt">(</span><span class="hl str">&quot;Backup is done&quot;</span><span class="hl opt">);</span>
+<span class="hl lin">161 </span>		survivor<span class="hl opt">.</span><span class="hl kwd">elimination</span><span class="hl opt">(</span>scan<span class="hl opt">);</span><span class="hl slc">//elimination process</span>
+<span class="hl lin">162 </span>		survivor<span class="hl opt">.</span><span class="hl kwd">summary</span><span class="hl opt">();</span><span class="hl slc">//summary process.</span>
+<span class="hl lin">163 </span>	<span class="hl opt">}</span>
+<span class="hl lin">164 </span><span class="hl opt">}</span>
+</pre>
+<p>Screen Capture for testing data:</p>
+<img src="SurvivorCapture.PNG" />
+</body>
+</html>
+<!--HTML generated by highlight 3.15, http://www.andre-simon.de/-->
