@@ -50,10 +50,10 @@ public class ShapePaintingCanvas extends Canvas {
 		}
 		this.shape=shape;
 		this.color=color;
-		for(xPos=0,yPos=0; xPos<getWidth() && yPos<getHeight(); 
+		for(xPos=0,yPos=0; xPos<getWidth()-30 && yPos<getHeight()-30; 
 				xPos+=getWidth()/20, yPos+=getHeight()/20){
 			repaint();
-			/*try 
+			/*
 			{ 
 			wait(100);
 			} 
