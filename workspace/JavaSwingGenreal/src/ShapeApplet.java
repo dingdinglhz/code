@@ -4,6 +4,8 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
+
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Label;
 import javax.swing.SwingConstants;
@@ -16,7 +18,9 @@ import java.awt.event.MouseEvent;
 //Necessary imports.
 
 public class ShapeApplet extends JApplet {
-	private ShapePaintingCanvas canvasCenter;
+	public ShapeApplet() {
+	}
+	//private ShapePaintingCanvas canvasCenter;
 	//The canvas that draw shapes in the center.
 	
 	private JPanel panelTop;
@@ -45,13 +49,14 @@ public class ShapeApplet extends JApplet {
 	private JLabel infoLabel;
 	//A label to display the information.
 	
-	private Color color;
+	volatile private Color color;
 	//to store the color the user chooses.
-	private char shape;
+	volatile private char shape;
 	//to store the shape the user chooses.'S' for square,
 	//'R' for rectangle, 'C' for circle, 'E' for ellipse.
+	volatile int xPos,yPos;
 	
-	public ShapeApplet() {
+	public void init() {
 		//Setup the main user interface in the constructor. Although this is done
 		//in init() method in examples in class, the IDE recommends this way.
 		getContentPane().setSize(new Dimension(400, 300));
@@ -79,7 +84,7 @@ public class ShapeApplet extends JApplet {
 			@Override //"@Override" indicates that the original mouseClicked() method is overwritten. 
 			public void mouseClicked(MouseEvent arg0) {
 				shape='S';
-				infoLabel.setText("Square selected");
+				infoLabel.setText("Square selected"+shape);
 				//When the radio button is clicked, set the shape to square, and display a message.
 			}
 		});
@@ -94,7 +99,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				shape='R';
-				infoLabel.setText("Rectangle selected");
+				infoLabel.setText("Rectangle selected"+shape);
 			}
 		});
 		buttonGroupShape.add(rdbtnRectangle);
@@ -105,7 +110,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				shape='C';
-				infoLabel.setText("Circle selected");
+				infoLabel.setText("Circle selected"+shape);
 			}
 		});
 		buttonGroupShape.add(rdbtnCircle);
@@ -116,7 +121,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				shape='E';
-				infoLabel.setText("Ellipse selected");
+				infoLabel.setText("Ellipse selected"+shape);
 			}
 		});
 		buttonGroupShape.add(rdbtnEllipse);
@@ -140,7 +145,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				color=Color.green;
-				infoLabel.setText("Green selected");
+				infoLabel.setText("Green selected"+color);
 			}
 		});
 		buttonGroupColor.add(rdbtnGreen);
@@ -151,7 +156,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				color=Color.red;
-				infoLabel.setText("Red selected");
+				infoLabel.setText("Red selected"+color);
 			}
 		});
 		buttonGroupColor.add(rdbtnRed);
@@ -162,7 +167,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				color=Color.yellow;
-				infoLabel.setText("Yellow selected");
+				infoLabel.setText("Yellow selected"+color);
 			}
 		});
 		buttonGroupColor.add(rdbtnYellow);
@@ -173,7 +178,7 @@ public class ShapeApplet extends JApplet {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				color=Color.blue;
-				infoLabel.setText("Blue selected");
+				infoLabel.setText("Blue selected"+color);
 			}
 		});
 		buttonGroupColor.add(rdbtnBlue);
@@ -188,7 +193,8 @@ public class ShapeApplet extends JApplet {
 		btnDraw.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				canvasCenter.draw(shape, color);
+				//canvasCenter.draw(shape, color);
+				draw();
 				infoLabel.setText("Shape drawn");
 				//When the button is clicked, the draw function of the canvas is called.
 			}
@@ -199,14 +205,71 @@ public class ShapeApplet extends JApplet {
 		btnAnimate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				canvasCenter.animate(shape, color);
+				//canvasCenter.animate(shape, color);
+				animate();
 				infoLabel.setText("Animation started");
 			}
 		});
 		panelTop.add(btnAnimate);//Similarly, "Animate" button is created.
 		
 		//Add the shape drawing canvas in the center of the main frame.
-		canvasCenter = new ShapePaintingCanvas();
-		getContentPane().add(canvasCenter, BorderLayout.CENTER);
+		//canvasCenter = new ShapePaintingCanvas();
+		//getContentPane().add(canvasCenter, BorderLayout.CENTER);
+	}
+	public void paint(Graphics g){
+		
+		//g.setColor(Color.white);
+		//g.fillRect(0, 0, getWidth() ,getHeight());
+		super.paint(g);
+		if(shape!=0 && color!=null){
+			g.setColor(color);
+			switch(shape){
+			case 'S':
+				g.fillRect(xPos, yPos, 20, 20);
+				break;
+			case 'R':
+				g.fillRect(xPos, yPos, 15, 30);
+				break;
+			case 'C':
+				g.fillOval(xPos, yPos, 25, 25);
+				break;
+			case 'E':
+				g.fillOval(xPos, yPos, 20, 35);
+				break;
+			}
+			System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color);
+		}
+	}
+	public void draw(){
+		if(shape==0 || color==null){
+			return;
+		}
+		xPos=getWidth()/2;
+		yPos=getHeight()/2;
+		repaint();
+		System.out.println("draw");
+	}
+	public void animate(){
+		if(shape==0 || color==null){
+			return;
+		}
+		for(xPos=0,yPos=0; xPos<getWidth()-30 && yPos<getHeight()-30; 
+				xPos+=getWidth()/20, yPos+=getHeight()/20){
+			synchronized(this){
+				repaint();
+			}
+			
+			System.out.println("for:("+xPos+","+yPos+")");
+			/*try{
+				Thread.sleep(100);
+			}catch(Exception e){
+				
+			}*/
+			/*try
+			{ 
+			 wait(1000);
+			} 
+			catch(Exception e){}*/
+		}
 	}
 }

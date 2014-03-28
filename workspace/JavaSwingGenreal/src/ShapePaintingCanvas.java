@@ -12,10 +12,10 @@ public class ShapePaintingCanvas extends Canvas {
 	/**
 	 * Create the panel.
 	 */
-	private Color color;
-	private char shape;
-	private int xPos,yPos;
-	public void paint(Graphics g){
+	volatile Color color;
+	volatile char shape;
+	private volatile int xPos,yPos;
+	public void update(Graphics g){
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth() ,getHeight());
 		g.setColor(color);
@@ -27,19 +27,20 @@ public class ShapePaintingCanvas extends Canvas {
 			g.fillRect(xPos, yPos, 15, 30);
 			break;
 		case 'C':
-			g.fillRect(xPos, yPos, 25, 25);
+			g.fillOval(xPos, yPos, 25, 25);
 			break;
 		case 'E':
 			g.fillOval(xPos, yPos, 20, 35);
 			break;
 		}
+		System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color);
 	}
 	public void draw(char shape,Color color){
 		if(shape==0 || color==null){
 			return;
 		}
-		this.shape=shape;
-		this.color=color;
+		//this.shape=shape;
+		//this.color=color;
 		xPos=getWidth()/2;
 		yPos=getHeight()/2;
 		repaint();
@@ -52,12 +53,19 @@ public class ShapePaintingCanvas extends Canvas {
 		this.color=color;
 		for(xPos=0,yPos=0; xPos<getWidth()-30 && yPos<getHeight()-30; 
 				xPos+=getWidth()/20, yPos+=getHeight()/20){
+			
 			repaint();
-			/*
+			System.out.println("for:("+xPos+","+yPos+")");
+			/*try{
+				Thread.sleep(100);
+			}catch(Exception e){
+				
+			}*/
+			/*try
 			{ 
-			wait(100);
+			 wait(1000);
 			} 
-			catch(Exception e){e.printStackTrace();}*/
+			catch(Exception e){}*/
 		}
 	}
 }
