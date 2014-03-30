@@ -5,7 +5,6 @@ import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Label;
 import javax.swing.SwingConstants;
@@ -13,14 +12,22 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-//Necessary imports.
+import javax.swing.BoxLayout;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class ShapeApplet extends JApplet {
 	public ShapeApplet() {
 	}
+	
 	//private ShapePaintingCanvas canvasCenter;
+	private ShapePaintingPanel canvasCenter;
 	//The canvas that draw shapes in the center.
 	
 	private JPanel panelTop;
@@ -46,15 +53,13 @@ public class ShapeApplet extends JApplet {
 	private ButtonGroup buttonGroupShape = new ButtonGroup();
 	//The panel on the west of the main frame to let the users choose a shape.
 	
-	private JLabel infoLabel;
-	//A label to display the information.
-	
-	volatile private Color color;
-	//to store the color the user chooses.
-	volatile private char shape;
-	//to store the shape the user chooses.'S' for square,
-	//'R' for rectangle, 'C' for circle, 'E' for ellipse.
-	volatile int xPos,yPos;
+	private JPanel panelBottom;
+	private JLabel infoLabel;//labels to display information.
+	private JLabel infoShape;
+	private JLabel infoColor;
+	private JLabel lblSetsize;
+	private JSpinner spinner;
+	//The panel on the bottom of the main frame to display the information.
 	
 	public void init() {
 		//Setup the main user interface in the constructor. Although this is done
@@ -65,9 +70,6 @@ public class ShapeApplet extends JApplet {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		//set basic properties of the main panel.
 		
-		infoLabel = new JLabel("Hello world");
-		getContentPane().add(infoLabel, BorderLayout.SOUTH);
-		//add the information label in the bottom.
 		
 		//Construct the shape selection panel on the west side.
 		panelWest = new JPanel();//create a new JPanel.
@@ -80,50 +82,28 @@ public class ShapeApplet extends JApplet {
 		panelWest.add(lblShape);//add this label to west panel.
 		
 		rdbtnSquare = new JRadioButton("Square");//create a new radio button
-		rdbtnSquare.addMouseListener(new MouseAdapter() {
-			@Override //"@Override" indicates that the original mouseClicked() method is overwritten. 
-			public void mouseClicked(MouseEvent arg0) {
-				shape='S';
-				infoLabel.setText("Square selected"+shape);
-				//When the radio button is clicked, set the shape to square, and display a message.
-			}
-		});
+		rdbtnSquare.addItemListener(new ShapeHandler('S')); 
 		//Add a action listener to the radio button.It set the shape whenever the radio button is clicked. 
 		buttonGroupShape.add(rdbtnSquare);
 		//Add the radio button to a button group so that only one of the options get chosen at a time.
 		panelWest.add(rdbtnSquare);//add this radio button to the west panel.
 		//This segment of code create, set and add a radio button to the west panel. 
 		//Identical process is carried out for the other buttons, so there won't be redundant commenting.
+		
 		rdbtnRectangle = new JRadioButton("Rectangle");
-		rdbtnRectangle.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				shape='R';
-				infoLabel.setText("Rectangle selected"+shape);
-			}
-		});
+		rdbtnRectangle.addItemListener(new ShapeHandler('R'));
 		buttonGroupShape.add(rdbtnRectangle);
 		panelWest.add(rdbtnRectangle);
 		//Create rectangle radio button.
+		
 		rdbtnCircle = new JRadioButton("Circle");
-		rdbtnCircle.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				shape='C';
-				infoLabel.setText("Circle selected"+shape);
-			}
-		});
+		rdbtnCircle.addItemListener(new ShapeHandler('C')); 
 		buttonGroupShape.add(rdbtnCircle);
 		panelWest.add(rdbtnCircle);
 		//Create circle radio button.
+		
 		rdbtnEllipse = new JRadioButton("Ellipse");
-		rdbtnEllipse.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				shape='E';
-				infoLabel.setText("Ellipse selected"+shape);
-			}
-		});
+		rdbtnEllipse.addItemListener(new ShapeHandler('E'));
 		buttonGroupShape.add(rdbtnEllipse);
 		panelWest.add(rdbtnEllipse);
 		//Create ellipse radio button.
@@ -141,46 +121,25 @@ public class ShapeApplet extends JApplet {
 		panelEast.add(lblColors);
 		////Create "Colors:" label.
 		rdbtnGreen = new JRadioButton("Green");
-		rdbtnGreen.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				color=Color.green;
-				infoLabel.setText("Green selected"+color);
-			}
-		});
+		rdbtnGreen.addItemListener(new ColorHandler(Color.green));
 		buttonGroupColor.add(rdbtnGreen);
 		panelEast.add(rdbtnGreen);
 		//Create green radio button.
+		
 		rdbtnRed = new JRadioButton("Red");
-		rdbtnRed.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				color=Color.red;
-				infoLabel.setText("Red selected"+color);
-			}
-		});
+		rdbtnRed.addItemListener(new ColorHandler(Color.red));
 		buttonGroupColor.add(rdbtnRed);
 		panelEast.add(rdbtnRed);
 		//Create red radio button.
+		
 		rdbtnYellow = new JRadioButton("Yellow");
-		rdbtnYellow.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				color=Color.yellow;
-				infoLabel.setText("Yellow selected"+color);
-			}
-		});
+		rdbtnYellow.addItemListener(new ColorHandler(Color.yellow));
 		buttonGroupColor.add(rdbtnYellow);
 		panelEast.add(rdbtnYellow);
 		//Create yellow radio button.
+		
 		rdbtnBlue = new JRadioButton("Blue");
-		rdbtnBlue.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				color=Color.blue;
-				infoLabel.setText("Blue selected"+color);
-			}
-		});
+		rdbtnBlue.addItemListener(new ColorHandler(Color.blue));
 		buttonGroupColor.add(rdbtnBlue);
 		panelEast.add(rdbtnBlue);
 		//Create blue radio button.
@@ -193,8 +152,8 @@ public class ShapeApplet extends JApplet {
 		btnDraw.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//canvasCenter.draw(shape, color);
-				draw();
+				canvasCenter.draw();
+				//draw();
 				infoLabel.setText("Shape drawn");
 				//When the button is clicked, the draw function of the canvas is called.
 			}
@@ -205,71 +164,82 @@ public class ShapeApplet extends JApplet {
 		btnAnimate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//canvasCenter.animate(shape, color);
-				animate();
+				canvasCenter.animate();
+				//animate();
 				infoLabel.setText("Animation started");
 			}
 		});
 		panelTop.add(btnAnimate);//Similarly, "Animate" button is created.
 		
+		lblSetsize = new JLabel("SetSize:");
+		panelTop.add(lblSetsize);
+		
+		spinner = new JSpinner();
+		spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				canvasCenter.setShapeSize(e.getSource());
+			}
+		});
+		spinner.setModel(new SpinnerNumberModel(25, 20, 100, 1));
+		panelTop.add(spinner);
+		
 		//Add the shape drawing canvas in the center of the main frame.
 		//canvasCenter = new ShapePaintingCanvas();
 		//getContentPane().add(canvasCenter, BorderLayout.CENTER);
-	}
-	public void paint(Graphics g){
+		canvasCenter = new ShapePaintingPanel();
+		getContentPane().add(canvasCenter, BorderLayout.CENTER);
 		
-		//g.setColor(Color.white);
-		//g.fillRect(0, 0, getWidth() ,getHeight());
-		super.paint(g);
-		if(shape!=0 && color!=null){
-			g.setColor(color);
-			switch(shape){
-			case 'S':
-				g.fillRect(xPos, yPos, 20, 20);
-				break;
-			case 'R':
-				g.fillRect(xPos, yPos, 15, 30);
-				break;
-			case 'C':
-				g.fillOval(xPos, yPos, 25, 25);
-				break;
-			case 'E':
-				g.fillOval(xPos, yPos, 20, 35);
-				break;
-			}
-			System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color);
-		}
-	}
-	public void draw(){
-		if(shape==0 || color==null){
-			return;
-		}
-		xPos=getWidth()/2;
-		yPos=getHeight()/2;
-		repaint();
-		System.out.println("draw");
-	}
-	public void animate(){
-		if(shape==0 || color==null){
-			return;
-		}
-		for(xPos=0,yPos=0; xPos<getWidth()-30 && yPos<getHeight()-30; 
-				xPos+=getWidth()/20, yPos+=getHeight()/20){
-			synchronized(this){
-				repaint();
-			}
-			
-			System.out.println("for:("+xPos+","+yPos+")");
-			/*try{
-				Thread.sleep(100);
-			}catch(Exception e){
+		//add the information label in the bottom.
+		panelBottom = new JPanel();
+		getContentPane().add(panelBottom, BorderLayout.SOUTH);
+		panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.Y_AXIS));
 				
-			}*/
-			/*try
-			{ 
-			 wait(1000);
-			} 
-			catch(Exception e){}*/
+		infoLabel = new JLabel("Hello world");
+		panelBottom.add(infoLabel);
+				
+		infoShape = new JLabel();
+		infoShape.setText("Current Shape:");
+		panelBottom.add(infoShape);
+		
+		infoColor = new JLabel("Current Color:");
+		panelBottom.add(infoColor);
+	}
+	
+	private class ShapeHandler implements ItemListener{
+		private char shape;
+		ShapeHandler(char shape){
+			this.shape=shape;
+		}
+		private String shapeToString(){
+			switch(this.shape){
+			case 'S':
+				return "Square";
+			case 'R':
+				return "Rectangler";
+			case 'C':
+				return "Circle";
+			case 'E':
+				return "Ellipse";
+			}
+			return "Undefined";
+		}
+		@Override//"@Override" indicates that the original mouseClicked() method is overwritten. 
+		public void itemStateChanged(ItemEvent arg0) {
+			canvasCenter.setShape(this.shape);
+			infoShape.setText("Current Shape:"+shapeToString());
+			//When the radio button is clicked, set the shape, and display a message.
+		}
+	}
+	private class ColorHandler implements ItemListener{
+		private Color color;
+		ColorHandler(Color color){
+			this.color=color;
+		}
+		@Override//"@Override" indicates that the original mouseClicked() method is overwritten. 
+		public void itemStateChanged(ItemEvent arg0) {
+			canvasCenter.setColor(this.color);
+			infoColor.setText("Current Color:"+color.toString());
+			//When the radio button is clicked, set the color, and display a message.
 		}
 	}
 }
