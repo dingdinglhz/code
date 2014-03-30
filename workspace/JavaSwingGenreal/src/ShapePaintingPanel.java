@@ -8,11 +8,11 @@ public class ShapePaintingPanel extends JPanel {
 	private Color color;
 	//to store the color the user chooses.
 	private char shape;
-	//to store the shape the user chooses.'S' for square,
-	//'R' for rectangle, 'C' for circle, 'E' for ellipse.
-	private int shapeSize=25;//the size of the shape.default is 25;
-	private volatile int xPos,yPos;
-	static final double RATIO=1.4142;
+	//to store the shape the user chooses.'r' for empty rectangle,
+	//'R' for filled rectangle, 'o' for empty oval, 'O' for filled oval.
+	private double xPos,yPos;
+	private int shapeWidth=25,shapeHeight=25;
+	//The dimension of the shape.Default is 25*25;
 	public Color getColor() {
 		return color;
 	}
@@ -26,53 +26,59 @@ public class ShapePaintingPanel extends JPanel {
 		this.shape = shape;
 	}
 	
-	public int getShapeSize() {
-		return shapeSize;
+	public double getShapeWidth() {
+		return shapeWidth;
 	}
-	public void setShapeSize(int shapeSize) {
-		this.shapeSize = shapeSize;
+	public void setShapeWidth(int shapeWidth) {
+		this.shapeWidth = shapeWidth;
+	}
+	public double getShapeHeight() {
+		return shapeHeight;
+	}
+	public void setShapeHeight(int shapeHeight) {
+		this.shapeHeight = shapeHeight;
+	}
+	public boolean ready(){
+		return (shape!=0 && color!=null);
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		//this.setBackground();
 		if(shape==0 || color==null){
 			return;
 		}
 		g.setColor(color);
 		switch(shape){
-		case 'S':
-			g.fillRect(xPos, yPos, shapeSize, shapeSize);
+		case 'r':
+			g.drawRect((int)xPos, (int)yPos, shapeWidth, shapeHeight);
 			break;
 		case 'R':
-			g.fillRect(xPos, yPos, (int) (shapeSize*RATIO), (int) (shapeSize/RATIO));
+			g.fillRect((int)xPos, (int)yPos, shapeWidth, shapeHeight);
 			break;
-		case 'C':
-			g.fillOval(xPos, yPos, shapeSize, shapeSize);
+		case 'o':
+			g.drawOval((int)xPos, (int)yPos, shapeWidth, shapeHeight);
 			break;
-		case 'E':
-			g.fillOval(xPos, yPos,  (int) (shapeSize*RATIO), (int) (shapeSize/RATIO));
+		case 'O':
+			g.fillOval((int)xPos, (int)yPos, shapeWidth, shapeHeight);
 			break;
 		}
-		System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color);
+		//System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color); debugging code.
 	}
 	public void draw(){
-		xPos=getWidth()/2;
-		yPos=getHeight()/2;
+		xPos=getWidth()/2.0-shapeWidth/2.0;
+		yPos=getHeight()/2.0-shapeHeight/2.0;
 		Graphics g=getGraphics();
 		paintComponent(g);
 	}
 	public void animate(){
 		Graphics g=getGraphics();
-		for(xPos=0,yPos=0; xPos<=getWidth()/2 && yPos<=getHeight()/2; 
-				xPos+=getWidth()/100, yPos+=getHeight()/100){
+		for(xPos=0,yPos=0; xPos+shapeWidth<getWidth() && yPos+shapeHeight<getHeight(); 
+				xPos+=getWidth()/100.0, yPos+=getHeight()/100.0){
 			paintComponent(g);
-			//repaint();
 			
-			System.out.println("for:("+xPos+","+yPos+")");
+			//System.out.println("for:("+xPos+","+yPos+")"); debugging code.
 			try{
 				Thread.sleep(10);
 			}catch(Exception e){
-				
 			}
 		}
 	}
