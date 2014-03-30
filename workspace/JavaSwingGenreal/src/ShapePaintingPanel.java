@@ -1,8 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
-
+//useful imports.
 
 public class ShapePaintingPanel extends JPanel {
 	private Color color;
@@ -25,7 +24,6 @@ public class ShapePaintingPanel extends JPanel {
 	public void setShape(char shape) {
 		this.shape = shape;
 	}
-	
 	public double getShapeWidth() {
 		return shapeWidth;
 	}
@@ -38,47 +36,52 @@ public class ShapePaintingPanel extends JPanel {
 	public void setShapeHeight(int shapeHeight) {
 		this.shapeHeight = shapeHeight;
 	}
+	//getters and setters for the properties of the shape to be drawn.
 	public boolean ready(){
 		return (shape!=0 && color!=null);
-	}
-	public void paintComponent(Graphics g){
-		super.paintComponent(g);
-		if(shape==0 || color==null){
+	}//check if the shape and color is already set or not.
+	public void paintComponent(Graphics g){//overwritten paintComponent method.
+		//In swing, it is not recommended to use paint(), but paintComponent() instead.
+		super.paintComponent(g);//use  paintComponent() from super class first.
+		if(!ready()){
 			return;
-		}
-		g.setColor(color);
-		switch(shape){
+		}//If it is not ready to draw the shape, return.
+		g.setColor(color);//set the color of the 'Graphics' object g. 
+		switch(shape){//Interpret the shape code to actual shapes and draw them.
 		case 'r':
 			g.drawRect((int)xPos, (int)yPos, shapeWidth, shapeHeight);
-			break;
+			break;//empty rectangle
 		case 'R':
 			g.fillRect((int)xPos, (int)yPos, shapeWidth, shapeHeight);
-			break;
+			break;//filled rectangle
 		case 'o':
 			g.drawOval((int)xPos, (int)yPos, shapeWidth, shapeHeight);
-			break;
+			break;//empty oval
 		case 'O':
 			g.fillOval((int)xPos, (int)yPos, shapeWidth, shapeHeight);
-			break;
+			break;//filled oval
 		}
-		//System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color); debugging code.
+		//System.out.println("upd:("+xPos+","+yPos+") shape"+shape+"color"+color);
 	}
 	public void draw(){
 		xPos=getWidth()/2.0-shapeWidth/2.0;
 		yPos=getHeight()/2.0-shapeHeight/2.0;
+		//Find the proper coordinate to draw in the middle of the panel.
 		Graphics g=getGraphics();
 		paintComponent(g);
+		//Find the 'Graphic' object and use that to call paintComponent() to draw.
 	}
 	public void animate(){
-		Graphics g=getGraphics();
+		Graphics g=getGraphics();//Find the 'Graphic' object.
 		for(xPos=0,yPos=0; xPos+shapeWidth<getWidth() && yPos+shapeHeight<getHeight(); 
 				xPos+=getWidth()/100.0, yPos+=getHeight()/100.0){
-			paintComponent(g);
-			
+			//A for-loop. The shape starts from top left and stops at bottom right.
+			paintComponent(g);//draw the shape repeatedly.
 			//System.out.println("for:("+xPos+","+yPos+")"); debugging code.
 			try{
-				Thread.sleep(10);
+				Thread.sleep(10);//wait for 0.01s before drawing the next shape.
 			}catch(Exception e){
+				//a exception is expected and nothing special needs to be done.
 			}
 		}
 	}
