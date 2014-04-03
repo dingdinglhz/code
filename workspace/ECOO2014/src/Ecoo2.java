@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.lang.Character;
-private class Solver{
+class Solver{
 	String code;
 	int len;
 	boolean bina[];

@@ -1,3 +1,16 @@
+/*--------------------------------------------------------------------------------------*/
+/*  ShapeApplet.java + ShapePaintingPanel.java                                          */
+/* 	An applet that displays a shape on the screen. It allows the user to select which of*/
+/*  4 different shapes to be draw. It also allows the user to choose the color of the   */
+/*  shape and set the height and width of that shape. In addition to simply drawing the */
+/*  shape, this applet can also have a simple animation.                                */
+/*--------------------------------------------------------------------------------------*/
+/*  Author: Hanzhen, Lin                                                                */
+/*  Date:  Mar, 30th, 2014                                                              */
+/*--------------------------------------------------------------------------------------*/
+/*  Input: Graphical user interface (buttons, spinners, radio buttons)                  */
+/*  Output:Graphical user interface (labels, canvas panels)                             */
+/*--------------------------------------------------------------------------------------*/
 import javax.swing.JApplet;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
