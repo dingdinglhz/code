@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+
 import java.awt.GridLayout;
 import java.awt.Label;
 import javax.swing.SwingConstants;
@@ -33,9 +35,12 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.border.TitledBorder;
 //useful imports.
 
 public class ShapeApplet extends JApplet {
+	public ShapeApplet() {
+	}
 	
 	private ShapePaintingPanel canvasCenter;
 	//The canvas that draw shapes in the center.
@@ -51,7 +56,6 @@ public class ShapeApplet extends JApplet {
 	//buttons as well as 2 spinners to set the dimension of the shape.
 	
 	private JPanel panelWest;
-	private Label lblShape;
 	private JRadioButton rdbtnRectangleE;
 	private JRadioButton rdbtnRectangleF;
 	private JRadioButton rdbtnOvalE;
@@ -60,7 +64,6 @@ public class ShapeApplet extends JApplet {
 	//The panel on the west of the main frame to let the users choose a shape.
 	
 	private JPanel panelEast;
-	private JLabel lblColors;
 	private JRadioButton rdbtnBlue;
 	private JRadioButton rdbtnYellow;
 	private JRadioButton rdbtnRed;
@@ -86,13 +89,9 @@ public class ShapeApplet extends JApplet {
 		
 		//Construct the shape selection panel on the west side.
 		panelWest = new JPanel();//create a new JPanel.
-		panelWest.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));//set border type.
+		panelWest.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Shapes:", TitledBorder.LEADING, TitledBorder.BELOW_TOP, null, null));//set border type.
 		getContentPane().add(panelWest, BorderLayout.WEST);//add the panel to the west.
-		panelWest.setLayout(new GridLayout(0, 1));//set this panel to GridLayout.
-		//create a new panel that is ready to add stuffs in.
-		lblShape = new Label("Shapes:");//create a new label to display "Shapes:"
-		lblShape.setAlignment(Label.CENTER);
-		panelWest.add(lblShape);//add this label to west panel.
+		panelWest.setLayout(new GridLayout(0, 1));
 		
 		rdbtnRectangleE = new JRadioButton("Empty Rectangle");//create the "Empty Rectangle" radio button.
 		rdbtnRectangleE.addItemListener(new ShapeHandler('r')); 
@@ -125,13 +124,9 @@ public class ShapeApplet extends JApplet {
 		//The process is similar to the construction of west panel. 
 		//Therefore, again, redundant commenting is saved for clarity and readability.
 		panelEast = new JPanel();
-		panelEast.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		panelEast.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Colors:", TitledBorder.LEADING, TitledBorder.BELOW_TOP, null, null));
 		getContentPane().add(panelEast, BorderLayout.EAST);
 		panelEast.setLayout(new GridLayout(0, 1));
-		
-		lblColors = new JLabel("Colors:");
-		lblColors.setHorizontalAlignment(SwingConstants.CENTER);
-		panelEast.add(lblColors);
 		////Create east panel and "Colors:" label.
 		
 		rdbtnGreen = new JRadioButton("Green");
