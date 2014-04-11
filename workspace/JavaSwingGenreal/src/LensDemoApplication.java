@@ -36,12 +36,6 @@ public class LensDemoApplication {
 	private JPanel panelBottom;
 	private JLabel lblLensType;
 	private JLabel lblImageType;
-	
-	private double f,u,v;
-	enum SolveFor{
-		F,U,V;
-	}
-	private SolveFor solveFor;
 	private JLabel lblImageSize;
 	
 	static final double MAX_F=10;
@@ -50,6 +44,12 @@ public class LensDemoApplication {
 	static final double DEFAULT_UV=15.0;
 	static final int SLIDER_R=100;
 	static final int SCALE=10;
+	
+	enum SolveFor{
+		F,U,V;
+	}
+	private SolveFor solveFor;
+	private double f=DEFAULT_F,u=DEFAULT_UV,v=DEFAULT_UV;
 	/**
 	 * Launch the application.
 	 */
@@ -88,7 +88,7 @@ public class LensDemoApplication {
 		panelBottom.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		frmThinLensDemonstration.getContentPane().add(panelBottom, BorderLayout.SOUTH);
 		GridBagLayout gbl_panelBottom = new GridBagLayout();
-		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 0, 0};
+		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 0};
 		gbl_panelBottom.rowHeights = new int[] {0, 0, 0, 0};
 		gbl_panelBottom.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gbl_panelBottom.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
@@ -127,8 +127,11 @@ public class LensDemoApplication {
             public void stateChanged(ChangeEvent e) {
                 JSlider tmp = (JSlider) e.getSource();
                 double i=(double)tmp.getValue()/(double)SLIDER_R;
-                System.out.println("SliderF value:"+tmp.getValue()+" -> "+i );
+                //System.out.println("SliderF value:"+tmp.getValue()+" -> "+i );
                 spinnerF.setValue(i);
+                if(!solveFor.equals(SolveFor.F)){
+                	valueChanged();
+                }
             }
         });
 		GridBagConstraints gbc_sliderF = new GridBagConstraints();
@@ -144,7 +147,7 @@ public class LensDemoApplication {
 			public void stateChanged(ChangeEvent e){
 				SpinnerNumberModel source=(SpinnerNumberModel) e.getSource();
 				int i=(int) Math.round(source.getNumber().doubleValue()*(double)SLIDER_R);
-				System.out.println("SpinnerF value:"+source.getValue()+" -> "+i );
+				//System.out.println("SpinnerF value:"+source.getValue()+" -> "+i );
 				sliderF.setValue(i);
 				}
 		});
@@ -172,6 +175,9 @@ public class LensDemoApplication {
                 JSlider tmp = (JSlider) e.getSource();
                 double i=(double)tmp.getValue()/(double)SLIDER_R;
                 spinnerU.setValue(i);
+                if(!solveFor.equals(SolveFor.U)){
+                	valueChanged();
+                }
             }
         });
 		GridBagConstraints gbc_sliderU = new GridBagConstraints();
@@ -214,6 +220,9 @@ public class LensDemoApplication {
                 JSlider tmp = (JSlider) e.getSource();
                 double i=(double)tmp.getValue()/(double)SLIDER_R;
                 spinnerV.setValue(i);
+                if(!solveFor.equals(SolveFor.V)){
+                	valueChanged();
+                }
             }
         });
 		GridBagConstraints gbc_sliderV = new GridBagConstraints();
@@ -309,5 +318,22 @@ public class LensDemoApplication {
 			}
 		}
 	}
-
+	private void valueChanged(){
+		System.out.println("valueChanged");
+		f=((SpinnerNumberModel) spinnerF.getModel()).getNumber().doubleValue();
+		u=((SpinnerNumberModel) spinnerU.getModel()).getNumber().doubleValue();
+		v=((SpinnerNumberModel) spinnerV.getModel()).getNumber().doubleValue();
+		if(solveFor.equals(SolveFor.F)){
+			f=1/(1/u+1/v);
+			spinnerF.setValue(f);
+		}else if (solveFor.equals(SolveFor.U)) {
+			u=1/(1/f-1/v);
+			spinnerU.setValue(u);
+			
+		}else if (solveFor.equals(SolveFor.V)) {
+			v=1/(1/f-1/u);
+			spinnerV.setValue(v);
+			
+		}
+	}
 }
