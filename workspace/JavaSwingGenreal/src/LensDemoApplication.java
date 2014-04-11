@@ -4,25 +4,52 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
-import javax.swing.JScrollPane;
-import java.awt.Canvas;
-import java.awt.Frame;
-
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class LensDemoApplication {
 
-	private JFrame frmThinLensDemonstration;
 
+	private JFrame frmThinLensDemonstration;
+	private JButton btnStartTutor;
+	private JSlider sliderF;
+	private JSlider sliderU;
+	private JSlider sliderV;
+	private JSpinner spinnerF;
+	private JSpinner spinnerU;
+	private JSpinner spinnerV;
+	private JLabel lblInfoLabel;
+	private JComboBox<String> comboBoxSolve;
+	private JPanel panelBottom;
+	private JLabel lblLensType;
+	private JLabel lblImageType;
+	
+	private double f,u,v;
+	enum SolveFor{
+		F,U,V;
+	}
+	private SolveFor solveFor;
+	private JLabel lblImageSize;
+	
+	static final double MAX_F=10;
+	static final double DEFAULT_F=7.5;
+	static final double MAX_UV=40;
+	static final double DEFAULT_UV=15.0;
+	static final int SLIDER_R=100;
+	static final int SCALE=10;
 	/**
 	 * Launch the application.
 	 */
@@ -51,18 +78,19 @@ public class LensDemoApplication {
 	 */
 	private void initialize() {
 		frmThinLensDemonstration = new JFrame();
+		frmThinLensDemonstration.setMinimumSize(new Dimension(800, 400));
 		frmThinLensDemonstration.setTitle("Thin Lens Demonstration");
 		frmThinLensDemonstration.setBounds(100, 100, 450, 300);
 		frmThinLensDemonstration.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmThinLensDemonstration.getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JPanel panelBottom = new JPanel();
+		panelBottom = new JPanel();
 		panelBottom.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		frmThinLensDemonstration.getContentPane().add(panelBottom, BorderLayout.SOUTH);
 		GridBagLayout gbl_panelBottom = new GridBagLayout();
-		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 0, 5};
+		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 0, 0};
 		gbl_panelBottom.rowHeights = new int[] {0, 0, 0, 0};
-		gbl_panelBottom.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelBottom.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gbl_panelBottom.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
 		panelBottom.setLayout(gbl_panelBottom);
 		
@@ -76,20 +104,15 @@ public class LensDemoApplication {
 		gbc_lblSetTheValues.gridy = 0;
 		panelBottom.add(lblSetTheValues, gbc_lblSetTheValues);
 		
-		JButton btnHelp = new JButton("Help");
-		GridBagConstraints gbc_btnHelp = new GridBagConstraints();
-		gbc_btnHelp.insets = new Insets(0, 0, 5, 5);
-		gbc_btnHelp.gridx = 2;
-		gbc_btnHelp.gridy = 0;
-		panelBottom.add(btnHelp, gbc_btnHelp);
+		btnStartTutor = new JButton("Start Tutorial");
+		GridBagConstraints gbc_btnStartTutor = new GridBagConstraints();
+		gbc_btnStartTutor.insets = new Insets(0, 0, 5, 0);
+		gbc_btnStartTutor.gridx = 3;
+		gbc_btnStartTutor.gridy = 0;
+		panelBottom.add(btnStartTutor, gbc_btnStartTutor);
 		
-		JButton btnStartDemo = new JButton("Start Demo");
-		GridBagConstraints gbc_btnStartDemo = new GridBagConstraints();
-		gbc_btnStartDemo.insets = new Insets(0, 0, 5, 0);
-		gbc_btnStartDemo.gridx = 3;
-		gbc_btnStartDemo.gridy = 0;
-		panelBottom.add(btnStartDemo, gbc_btnStartDemo);
-		
+		//Construct spiner and sliders for f
+
 		JLabel lblF = new JLabel("f:");
 		GridBagConstraints gbc_lblF = new GridBagConstraints();
 		gbc_lblF.fill = GridBagConstraints.BOTH;
@@ -98,6 +121,42 @@ public class LensDemoApplication {
 		gbc_lblF.gridy = 1;
 		panelBottom.add(lblF, gbc_lblF);
 		
+		sliderF = new JSlider((int)-MAX_F*SLIDER_R,(int)MAX_F*SLIDER_R,(int)DEFAULT_F*SLIDER_R);
+		sliderF.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider tmp = (JSlider) e.getSource();
+                double i=(double)tmp.getValue()/(double)SLIDER_R;
+                System.out.println("SliderF value:"+tmp.getValue()+" -> "+i );
+                spinnerF.setValue(i);
+            }
+        });
+		GridBagConstraints gbc_sliderF = new GridBagConstraints();
+		gbc_sliderF.fill = GridBagConstraints.BOTH;
+		gbc_sliderF.insets = new Insets(0, 0, 5, 5);
+		gbc_sliderF.gridx = 1;
+		gbc_sliderF.gridy = 1;
+		panelBottom.add(sliderF, gbc_sliderF);
+
+		spinnerF = new JSpinner();
+		spinnerF.setModel(new SpinnerNumberModel(DEFAULT_F, -MAX_F, MAX_F, 0.2));
+		spinnerF.getModel().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e){
+				SpinnerNumberModel source=(SpinnerNumberModel) e.getSource();
+				int i=(int) Math.round(source.getNumber().doubleValue()*(double)SLIDER_R);
+				System.out.println("SpinnerF value:"+source.getValue()+" -> "+i );
+				sliderF.setValue(i);
+				}
+		});
+		GridBagConstraints gbc_spinnerF = new GridBagConstraints();
+		gbc_spinnerF.fill = GridBagConstraints.BOTH;
+		gbc_spinnerF.insets = new Insets(0, 0, 5, 5);
+		gbc_spinnerF.gridx = 2;
+		gbc_spinnerF.gridy = 1;
+		panelBottom.add(spinnerF, gbc_spinnerF);
+		
+		//Construct spiner and sliders for u
+
 		JLabel lblU = new JLabel("u:");
 		GridBagConstraints gbc_lblU = new GridBagConstraints();
 		gbc_lblU.fill = GridBagConstraints.BOTH;
@@ -106,6 +165,40 @@ public class LensDemoApplication {
 		gbc_lblU.gridy = 2;
 		panelBottom.add(lblU, gbc_lblU);
 		
+		sliderU = new JSlider((int)-MAX_UV*SLIDER_R,(int)MAX_UV*SLIDER_R,(int)DEFAULT_UV*SLIDER_R);
+		sliderU.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider tmp = (JSlider) e.getSource();
+                double i=(double)tmp.getValue()/(double)SLIDER_R;
+                spinnerU.setValue(i);
+            }
+        });
+		GridBagConstraints gbc_sliderU = new GridBagConstraints();
+		gbc_sliderU.fill = GridBagConstraints.BOTH;
+		gbc_sliderU.insets = new Insets(0, 0, 5, 5);
+		gbc_sliderU.gridx = 1;
+		gbc_sliderU.gridy = 2;
+		panelBottom.add(sliderU, gbc_sliderU);
+		
+		spinnerU = new JSpinner();
+		spinnerU.setModel(new SpinnerNumberModel(DEFAULT_UV, -MAX_UV, MAX_UV, 1.0));
+		spinnerU.getModel().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e){
+				SpinnerNumberModel source=(SpinnerNumberModel) e.getSource();
+				int i=(int) Math.round(source.getNumber().doubleValue()*(double)SLIDER_R);
+				sliderU.setValue(i);
+				}
+		});
+		GridBagConstraints gbc_spinnerU = new GridBagConstraints();
+		gbc_spinnerU.fill = GridBagConstraints.BOTH;
+		gbc_spinnerU.insets = new Insets(0, 0, 5, 5);
+		gbc_spinnerU.gridx = 2;
+		gbc_spinnerU.gridy = 2;
+		panelBottom.add(spinnerU, gbc_spinnerU);
+		
+		//Construct spiner and sliders for v
+
 		JLabel lblV = new JLabel("v:");
 		GridBagConstraints gbc_lblV = new GridBagConstraints();
 		gbc_lblV.fill = GridBagConstraints.BOTH;
@@ -114,23 +207,15 @@ public class LensDemoApplication {
 		gbc_lblV.gridy = 3;
 		panelBottom.add(lblV, gbc_lblV);
 		
-		JSlider sliderF = new JSlider();
-		GridBagConstraints gbc_sliderF = new GridBagConstraints();
-		gbc_sliderF.fill = GridBagConstraints.BOTH;
-		gbc_sliderF.insets = new Insets(0, 0, 5, 5);
-		gbc_sliderF.gridx = 1;
-		gbc_sliderF.gridy = 1;
-		panelBottom.add(sliderF, gbc_sliderF);
-		
-		JSlider sliderU = new JSlider();
-		GridBagConstraints gbc_sliderU = new GridBagConstraints();
-		gbc_sliderU.fill = GridBagConstraints.BOTH;
-		gbc_sliderU.insets = new Insets(0, 0, 5, 5);
-		gbc_sliderU.gridx = 1;
-		gbc_sliderU.gridy = 2;
-		panelBottom.add(sliderU, gbc_sliderU);
-		
-		JSlider sliderV = new JSlider();
+		sliderV = new JSlider((int)-MAX_UV*SLIDER_R,(int)MAX_UV*SLIDER_R,(int)DEFAULT_UV*SLIDER_R);
+		sliderV.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider tmp = (JSlider) e.getSource();
+                double i=(double)tmp.getValue()/(double)SLIDER_R;
+                spinnerV.setValue(i);
+            }
+        });
 		GridBagConstraints gbc_sliderV = new GridBagConstraints();
 		gbc_sliderV.insets = new Insets(0, 0, 0, 5);
 		gbc_sliderV.fill = GridBagConstraints.BOTH;
@@ -138,29 +223,15 @@ public class LensDemoApplication {
 		gbc_sliderV.gridy = 3;
 		panelBottom.add(sliderV, gbc_sliderV);
 		
-		JSpinner spinnerF = new JSpinner();
-		spinnerF.setModel(new SpinnerNumberModel(5.0, -15.0, 15.0, 1.0));
-		spinnerF.setPreferredSize(new Dimension(50, 22));
-		GridBagConstraints gbc_spinnerF = new GridBagConstraints();
-		gbc_spinnerF.fill = GridBagConstraints.BOTH;
-		gbc_spinnerF.insets = new Insets(0, 0, 5, 5);
-		gbc_spinnerF.gridx = 2;
-		gbc_spinnerF.gridy = 1;
-		panelBottom.add(spinnerF, gbc_spinnerF);
-		
-		JSpinner spinnerU = new JSpinner();
-		spinnerU.setModel(new SpinnerNumberModel(10.0, -15.0, 15.0, 1.0));
-		spinnerU.setPreferredSize(new Dimension(50, 22));
-		GridBagConstraints gbc_spinnerU = new GridBagConstraints();
-		gbc_spinnerU.fill = GridBagConstraints.BOTH;
-		gbc_spinnerU.insets = new Insets(0, 0, 5, 5);
-		gbc_spinnerU.gridx = 2;
-		gbc_spinnerU.gridy = 2;
-		panelBottom.add(spinnerU, gbc_spinnerU);
-		
-		JSpinner spinnerV = new JSpinner();
-		spinnerV.setModel(new SpinnerNumberModel(10.0, -15.0, 15.0, 1.0));
-		spinnerV.setPreferredSize(new Dimension(50, 22));
+		spinnerV = new JSpinner();
+		spinnerV.setModel(new SpinnerNumberModel(DEFAULT_UV, -MAX_UV, MAX_UV, 1.0));
+		spinnerV.getModel().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e){
+				SpinnerNumberModel source=(SpinnerNumberModel) e.getSource();
+				int i=(int) Math.round(source.getNumber().doubleValue()*(double)SLIDER_R);
+				sliderV.setValue(i);
+				}
+		});
 		GridBagConstraints gbc_spinnerV = new GridBagConstraints();
 		gbc_spinnerV.fill = GridBagConstraints.BOTH;
 		gbc_spinnerV.insets = new Insets(0, 0, 0, 5);
@@ -168,34 +239,75 @@ public class LensDemoApplication {
 		gbc_spinnerV.gridy = 3;
 		panelBottom.add(spinnerV, gbc_spinnerV);
 		
-		JRadioButton rdbtnF=new JRadioButton("Solve for f.");
-		GridBagConstraints gbc_rdbtnF = new GridBagConstraints();
-		gbc_rdbtnF.insets = new Insets(0, 0, 5, 0);
-		gbc_rdbtnF.fill = GridBagConstraints.BOTH;
-		gbc_rdbtnF.gridx = 3;
-		gbc_rdbtnF.gridy = 1;
-		panelBottom.add(rdbtnF, gbc_rdbtnF);
 		
-		JRadioButton rdbtnU = new JRadioButton("Solve for u.");
-		GridBagConstraints gbc_rdbtnU = new GridBagConstraints();
-		gbc_rdbtnU.fill = GridBagConstraints.BOTH;
-		gbc_rdbtnU.insets = new Insets(0, 0, 5, 0);
-		gbc_rdbtnU.gridx = 3;
-		gbc_rdbtnU.gridy = 2;
-		panelBottom.add(rdbtnU, gbc_rdbtnU);
+		lblLensType = new JLabel("Convex");
+		GridBagConstraints gbc_lblLensType = new GridBagConstraints();
+		gbc_lblLensType.insets = new Insets(0, 0, 5, 0);
+		gbc_lblLensType.gridx = 3;
+		gbc_lblLensType.gridy = 1;
+		panelBottom.add(lblLensType, gbc_lblLensType);
+
+		lblImageType = new JLabel("Real Image");
+		GridBagConstraints gbc_lblImageType = new GridBagConstraints();
+		gbc_lblImageType.insets = new Insets(0, 0, 5, 0);
+		gbc_lblImageType.gridx = 3;
+		gbc_lblImageType.gridy = 2;
+		panelBottom.add(lblImageType, gbc_lblImageType);
+
+		lblImageSize = new JLabel("Magnifying");
+		GridBagConstraints gbc_lblImageSize = new GridBagConstraints();
+		gbc_lblImageSize.gridx = 3;
+		gbc_lblImageSize.gridy = 3;
+		panelBottom.add(lblImageSize, gbc_lblImageSize);
 		
-		JRadioButton rdbtnV = new JRadioButton("Solve for v.");
-		GridBagConstraints gbc_rdbtnV = new GridBagConstraints();
-		gbc_rdbtnV.fill = GridBagConstraints.BOTH;
-		gbc_rdbtnV.gridx = 3;
-		gbc_rdbtnV.gridy = 3;
-		panelBottom.add(rdbtnV, gbc_rdbtnV);
+		comboBoxSolve = new JComboBox<String>();
+		comboBoxSolve.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				changeUnknown((String)e.getItem(),e.getStateChange());
+			}
+		});
+		comboBoxSolve.setModel(new DefaultComboBoxModel<String>(new String[] {"Solve for f", "Solve for u", "Solve for v"}));
+		GridBagConstraints gbc_comboBoxSolve = new GridBagConstraints();
+		gbc_comboBoxSolve.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBoxSolve.fill = GridBagConstraints.BOTH;
+		gbc_comboBoxSolve.gridx = 2;
+		gbc_comboBoxSolve.gridy = 0;
+		panelBottom.add(comboBoxSolve, gbc_comboBoxSolve);
+		comboBoxSolve.setSelectedItem("Solve for v");
 		
-		JLabel lblNewLabel = new JLabel("Hello World");
-		frmThinLensDemonstration.getContentPane().add(lblNewLabel, BorderLayout.NORTH);
+		lblInfoLabel = new JLabel("Hello World");
+		frmThinLensDemonstration.getContentPane().add(lblInfoLabel, BorderLayout.NORTH);
 		
 		JPanel panel = new JPanel();
 		frmThinLensDemonstration.getContentPane().add(panel, BorderLayout.CENTER);
+	}
+	private void changeUnknown(String str,int stateChange){
+		if(stateChange==ItemEvent.SELECTED){
+			if(str.equals("Solve for f")){
+				solveFor=SolveFor.F;
+				spinnerF.setEnabled(false);
+				sliderF.setEnabled(false);
+			}else if (str.equals("Solve for u")) {
+				solveFor=SolveFor.U;
+				spinnerU.setEnabled(false);
+				sliderU.setEnabled(false);
+			}else if (str.equals("Solve for v")) {
+				solveFor=SolveFor.V;
+				spinnerV.setEnabled(false);
+				sliderV.setEnabled(false);
+			}
+		}else{
+			if(str.equals("Solve for f")){
+				spinnerF.setEnabled(true);
+				sliderF.setEnabled(true);
+			}else if (str.equals("Solve for u")) {
+				spinnerU.setEnabled(true);
+				sliderU.setEnabled(true);
+			}else if (str.equals("Solve for v")) {
+				spinnerV.setEnabled(true);
+				sliderV.setEnabled(true);
+			}
+		}
 	}
 
 }

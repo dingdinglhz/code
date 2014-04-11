@@ -11,34 +11,36 @@
 /*  Input: Graphical user interface (buttons, spinners, radio buttons)                  */
 /*  Output:Graphical user interface (labels, canvas panels)                             */
 /*--------------------------------------------------------------------------------------*/
-import javax.swing.JApplet;
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
-import java.awt.GridLayout;
-import java.awt.Label;
-import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 import java.awt.Color;
-import javax.swing.JButton;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JApplet;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 //useful imports.
 
 public class ShapeApplet extends JApplet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8923014846684544377L;
 	public ShapeApplet() {
 	}
 	
@@ -158,9 +160,8 @@ public class ShapeApplet extends JApplet {
 		getContentPane().add(panelTop, BorderLayout.NORTH);
 		//Create a panel on top to hold buttons.
 		btnDraw = new JButton("Draw");//Create "Draw" button.
-		btnDraw.addMouseListener(new MouseAdapter() {//add action listener to "draw" button
-			@Override
-			public void mouseClicked(MouseEvent e) {//called when button is clicked.
+		btnDraw.addActionListener(new ActionListener() {//add action listener to "draw" button
+			public void actionPerformed(ActionEvent arg0) {//called when button is clicked.
 				if(canvasCenter.ready()){//check if the canvas is ready to draw a shape.
 					canvasCenter.draw(); //call the canvas to draw the shape.
 					infoGeneral.setText("Shape drawn");//diaplay a message on the bottom.
@@ -173,9 +174,8 @@ public class ShapeApplet extends JApplet {
 		panelTop.add(btnDraw);//Add this button to top panel.
 		
 		btnAnimate = new JButton("Animate");
-		btnAnimate.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+		btnAnimate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				if(canvasCenter.ready()){
 					infoGeneral.setText("Animation started");
 					canvasCenter.animate();
