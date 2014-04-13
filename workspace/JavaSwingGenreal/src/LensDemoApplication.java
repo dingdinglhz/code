@@ -6,12 +6,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
@@ -23,7 +25,7 @@ import javax.swing.event.ChangeListener;
 public class LensDemoApplication {
 
 
-	private JFrame frmThinLensDemonstration;
+	private JFrame frame;
 	private JButton btnStartTutor;
 	private JSlider sliderF;
 	private JSlider sliderU;
@@ -31,25 +33,26 @@ public class LensDemoApplication {
 	private JSpinner spinnerF;
 	private JSpinner spinnerU;
 	private JSpinner spinnerV;
-	private JLabel lblInfoLabel;
+	private JLabel lblInfo;
 	private JComboBox<String> comboBoxSolve;
 	private JPanel panelBottom;
 	private JLabel lblLensType;
 	private JLabel lblImageType;
 	private JLabel lblImageSize;
-	
+	private JLabel lblObjectType;
+
 	static final double MAX_F=10;
 	static final double DEFAULT_F=7.5;
 	static final double MAX_UV=40;
 	static final double DEFAULT_UV=15.0;
 	static final int SLIDER_R=100;
-	static final int SCALE=10;
 	
 	enum SolveFor{
 		F,U,V;
 	}
 	private SolveFor solveFor;
-	private double f=DEFAULT_F,u=DEFAULT_UV,v=DEFAULT_UV;
+	private LensDemoCanvas canvas;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -58,7 +61,7 @@ public class LensDemoApplication {
 			public void run() {
 				try {
 					LensDemoApplication window = new LensDemoApplication();
-					window.frmThinLensDemonstration.setVisible(true);
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -77,18 +80,18 @@ public class LensDemoApplication {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmThinLensDemonstration = new JFrame();
-		frmThinLensDemonstration.setMinimumSize(new Dimension(800, 400));
-		frmThinLensDemonstration.setTitle("Thin Lens Demonstration");
-		frmThinLensDemonstration.setBounds(100, 100, 450, 300);
-		frmThinLensDemonstration.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmThinLensDemonstration.getContentPane().setLayout(new BorderLayout(0, 0));
+		frame = new JFrame();
+		frame.setMinimumSize(new Dimension(800, 400));
+		frame.setTitle("Thin Lens Demonstration");
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		panelBottom = new JPanel();
 		panelBottom.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
-		frmThinLensDemonstration.getContentPane().add(panelBottom, BorderLayout.SOUTH);
+		frame.getContentPane().add(panelBottom, BorderLayout.SOUTH);
 		GridBagLayout gbl_panelBottom = new GridBagLayout();
-		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 0};
+		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 125, 0};
 		gbl_panelBottom.rowHeights = new int[] {0, 0, 0, 0};
 		gbl_panelBottom.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gbl_panelBottom.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
@@ -104,10 +107,12 @@ public class LensDemoApplication {
 		gbc_lblSetTheValues.gridy = 0;
 		panelBottom.add(lblSetTheValues, gbc_lblSetTheValues);
 		
+		
 		btnStartTutor = new JButton("Start Tutorial");
 		GridBagConstraints gbc_btnStartTutor = new GridBagConstraints();
+		gbc_btnStartTutor.fill = GridBagConstraints.BOTH;
 		gbc_btnStartTutor.insets = new Insets(0, 0, 5, 0);
-		gbc_btnStartTutor.gridx = 3;
+		gbc_btnStartTutor.gridx = 4;
 		gbc_btnStartTutor.gridy = 0;
 		panelBottom.add(btnStartTutor, gbc_btnStartTutor);
 		
@@ -249,26 +254,38 @@ public class LensDemoApplication {
 		panelBottom.add(spinnerV, gbc_spinnerV);
 		
 		
-		lblLensType = new JLabel("Convex");
+		lblLensType = new JLabel("Convex Lens");
 		GridBagConstraints gbc_lblLensType = new GridBagConstraints();
-		gbc_lblLensType.insets = new Insets(0, 0, 5, 0);
+		gbc_lblLensType.fill = GridBagConstraints.BOTH;
+		gbc_lblLensType.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLensType.gridx = 3;
 		gbc_lblLensType.gridy = 1;
 		panelBottom.add(lblLensType, gbc_lblLensType);
 
 		lblImageType = new JLabel("Real Image");
 		GridBagConstraints gbc_lblImageType = new GridBagConstraints();
-		gbc_lblImageType.insets = new Insets(0, 0, 5, 0);
+		gbc_lblImageType.fill = GridBagConstraints.BOTH;
+		gbc_lblImageType.insets = new Insets(0, 0, 0, 5);
 		gbc_lblImageType.gridx = 3;
-		gbc_lblImageType.gridy = 2;
+		gbc_lblImageType.gridy = 3;
 		panelBottom.add(lblImageType, gbc_lblImageType);
-
-		lblImageSize = new JLabel("Magnifying");
-		GridBagConstraints gbc_lblImageSize = new GridBagConstraints();
-		gbc_lblImageSize.gridx = 3;
-		gbc_lblImageSize.gridy = 3;
-		panelBottom.add(lblImageSize, gbc_lblImageSize);
 		
+		lblImageSize = new JLabel("Magnifying: 1.0x");
+		GridBagConstraints gbc_lblImageSize = new GridBagConstraints();
+		gbc_lblImageSize.fill = GridBagConstraints.BOTH;
+		gbc_lblImageSize.insets = new Insets(0, 0, 5, 5);
+		gbc_lblImageSize.gridx = 3;
+		gbc_lblImageSize.gridy = 0;
+		panelBottom.add(lblImageSize, gbc_lblImageSize);
+
+		lblObjectType = new JLabel("Real Object");
+		GridBagConstraints gbc_lblObjectType = new GridBagConstraints();
+		gbc_lblObjectType.fill = GridBagConstraints.BOTH;
+		gbc_lblObjectType.insets = new Insets(0, 0, 5, 5);
+		gbc_lblObjectType.gridx = 3;
+		gbc_lblObjectType.gridy = 2;
+		panelBottom.add(lblObjectType, gbc_lblObjectType);
+
 		comboBoxSolve = new JComboBox<String>();
 		comboBoxSolve.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -284,11 +301,13 @@ public class LensDemoApplication {
 		panelBottom.add(comboBoxSolve, gbc_comboBoxSolve);
 		comboBoxSolve.setSelectedItem("Solve for v");
 		
-		lblInfoLabel = new JLabel("Hello World");
-		frmThinLensDemonstration.getContentPane().add(lblInfoLabel, BorderLayout.NORTH);
+				
 		
-		JPanel panel = new JPanel();
-		frmThinLensDemonstration.getContentPane().add(panel, BorderLayout.CENTER);
+		lblInfo = new JLabel("Hello World");
+		frame.getContentPane().add(lblInfo, BorderLayout.NORTH);
+		
+		canvas = new LensDemoCanvas();
+		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 	}
 	private void changeUnknown(String str,int stateChange){
 		if(stateChange==ItemEvent.SELECTED){
@@ -320,20 +339,58 @@ public class LensDemoApplication {
 	}
 	private void valueChanged(){
 		System.out.println("valueChanged");
-		f=((SpinnerNumberModel) spinnerF.getModel()).getNumber().doubleValue();
-		u=((SpinnerNumberModel) spinnerU.getModel()).getNumber().doubleValue();
-		v=((SpinnerNumberModel) spinnerV.getModel()).getNumber().doubleValue();
+		double f=((SpinnerNumberModel) spinnerF.getModel()).getNumber().doubleValue();
+		double u=((SpinnerNumberModel) spinnerU.getModel()).getNumber().doubleValue();
+		double v=((SpinnerNumberModel) spinnerV.getModel()).getNumber().doubleValue();
+		if(f==0){
+			JOptionPane.showMessageDialog(frame, "f cannot be equal to zero!", 
+					"Invalid Focal Length",JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		if(solveFor.equals(SolveFor.F)){
 			f=1/(1/u+1/v);
 			spinnerF.setValue(f);
 		}else if (solveFor.equals(SolveFor.U)) {
 			u=1/(1/f-1/v);
 			spinnerU.setValue(u);
-			
 		}else if (solveFor.equals(SolveFor.V)) {
 			v=1/(1/f-1/u);
 			spinnerV.setValue(v);
 			
+		}
+		identifyType(f,u,v);
+		canvas.draw(f,u,v);
+	}
+	private void identifyType(double f,double u, double v){
+		if(Double.isInfinite(u)){
+			lblObjectType.setText("Infinity Far Object");
+		}else if(u>0){
+			lblObjectType.setText("Real Object");
+		}else{
+			lblObjectType.setText("Virtual Object");
+		}
+		
+		if(Double.isInfinite(v)){
+			lblImageType.setText("No Image Formed");
+		}else if(v>0){
+			lblImageType.setText("Real Image");
+		}else{
+			lblImageType.setText("Virtual Image");
+		}
+
+		if(f==0){
+			lblLensType.setText("Invalid Lens");
+		}else if(f>0){
+			lblLensType.setText("Convex Lens");
+		}else{
+			lblLensType.setText("Concave Lens");
+		}
+		
+		DecimalFormat df=new DecimalFormat("#.###x");
+		if(Math.abs(v/u)>1.0){
+			lblImageSize.setText("Magnifying: "+df.format(v/u));
+		}else{
+			lblImageSize.setText("Minimizing: "+df.format(v/u));
 		}
 	}
 }
