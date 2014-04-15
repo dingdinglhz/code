@@ -301,8 +301,6 @@ public class LensDemoApplication {
 		panelBottom.add(comboBoxSolve, gbc_comboBoxSolve);
 		comboBoxSolve.setSelectedItem("Solve for v");
 		
-				
-		
 		lblInfo = new JLabel("Hello World");
 		frame.getContentPane().add(lblInfo, BorderLayout.NORTH);
 		
