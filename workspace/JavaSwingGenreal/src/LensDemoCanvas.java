@@ -150,15 +150,10 @@ public class LensDemoCanvas extends JPanel {
 		g.setStroke(thinSolid);
 		if(u>0){
 			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
-			//g.drawLine(ctrX, ctrY,  maxX, (int) (ctrY+(maxX-ctrX)*slope));
-			//g.setStroke(thinDashed);
-			//g.drawLine(0, (int) (ctrY-ctrX*slope),ctrX,ctrY);
 		}else{
 			g.drawLine(0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
 			g.setStroke(thinDashed);
 			g.drawLine(ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
-			//g.drawLine(ctrX, ctrY, (int)(ctrX-uX), (int)(ctrY-uY));
-			//g.drawLine((int)(ctrX-uX), (int)(ctrY-uY),maxX, (int) (ctrY+(maxX-ctrX)*slope));
 		}
 		if(f>0){
 			g.setStroke(thinSolid);
@@ -180,40 +175,36 @@ public class LensDemoCanvas extends JPanel {
 		g.setStroke(tmpStroke);
 	}
 	
-	private void drawRayFocal(Graphics2D g){
+	private void drawRayFocus(Graphics2D g){
+		if(u/f<=1 && u/f>=0){return;}
 		double uX=SCALE*u,uY=objHeight*SCALE;
 		double fX=SCALE*f;
 		Stroke tmpStroke=g.getStroke();
+		double slope=uY/(uX-fX);
+		double offSetY=ctrY+slope*uX-uY;
 		g.setStroke(thinSolid);
-		if(u>0){
-			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
-			//g.drawLine(ctrX, ctrY,  maxX, (int) (ctrY+(maxX-ctrX)*slope));
-			//g.setStroke(thinDashed);
-			//g.drawLine(0, (int) (ctrY-ctrX*slope),ctrX,ctrY);
-		}else{
-			g.drawLine(0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
+		if(u>0 && f>0){
+			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY), (int)(ctrX-fX), ctrY);
+			g.drawLine((int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
+		}else if(u<0 && f>0){
+			g.drawLine(0,(int)(ctrY-(ctrX-fX)*slope),(int)(ctrX-fX),ctrY);
+			g.drawLine((int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
 			g.setStroke(thinDashed);
-			g.drawLine(ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
-			//g.drawLine(ctrX, ctrY, (int)(ctrX-uX), (int)(ctrY-uY));
-			//g.drawLine((int)(ctrX-uX), (int)(ctrY-uY),maxX, (int) (ctrY+(maxX-ctrX)*slope));
+			g.drawLine(ctrX, (int)offSetY,(int)(ctrX-uX),(int)(ctrY-uY));
+		}else if(u>0 && f<0){
+			g.drawLine((int)(ctrX-uX),(int)(ctrY-uY),ctrX,(int)offSetY);
+			g.setStroke(thinDashed);
+			g.drawLine(ctrX,(int)offSetY ,(int)(ctrX-fX),ctrY);
+		}else if(u<0 && f<0){
+			g.drawLine(0,(int)(ctrY-(ctrX-fX)*slope),ctrX, (int) offSetY);
+			g.setStroke(thinDashed);
+			g.drawLine(ctrX, (int) offSetY, (int)(ctrX-fX), ctrY);
+			g.drawLine((int)(ctrX-fX), ctrY, (int)(ctrX-uX),(int)(ctrY-uY));
 		}
-		if(f>0){
-			g.setStroke(thinSolid);
-			g.drawLine(ctrX, (int)(ctrY-uY), (int)(ctrX+fX), ctrY);
-			double endY=ctrY+(maxX-ctrX-fX)*uY/fX;
-			g.drawLine((int)(ctrX+fX), ctrY , maxX, (int)endY);
-			endY=ctrY-uY-(ctrX)*uY/fX;
-			g.setStroke(thinDashed);
-			g.drawLine(0, (int) endY, ctrX,(int)(ctrY-uY));
-		}else{
-			g.setStroke(thinDashed);
-			g.drawLine((int)(ctrX+fX), ctrY, ctrX, (int)(ctrY-uY));
-			double endY=ctrY-uY-(ctrX)*uY/fX;
-			g.drawLine(0, (int) endY, (int)(ctrX+fX), ctrY);
-			g.setStroke(thinSolid);
-			endY=ctrY+(maxX-ctrX-fX)*uY/fX;
-			g.drawLine(ctrX, (int)(ctrY-uY), maxX, (int)endY);
-		}
+		g.setStroke(thinDashed);
+		g.drawLine(0,(int)offSetY,ctrX,(int)offSetY);
+		g.setStroke(thinSolid);
+		g.drawLine(ctrX,(int)offSetY,maxX,(int)offSetY);
 		g.setStroke(tmpStroke);
 	}
 	
@@ -232,8 +223,12 @@ public class LensDemoCanvas extends JPanel {
 		drawLens(g2d);
 		drawObject(g2d);
 		drawImage(g2d);
-		//drawRayCenter(g2d);
-		//drawRayParallel(g2d);
+		g2d.setColor(Color.red);
+		drawRayCenter(g2d);
+		g2d.setColor(Color.green);
+		drawRayParallel(g2d);
+		g2d.setColor(Color.blue);
+		drawRayFocus(g2d);
 		System.out.println("paintComponent called");
 		
 		
