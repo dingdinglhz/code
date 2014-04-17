@@ -21,6 +21,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LensDemoApplication {
 
@@ -52,6 +54,8 @@ public class LensDemoApplication {
 	}
 	private SolveFor solveFor;
 	private LensDemoCanvas canvas;
+	private JSpinner spinnerSize;
+	private JButton btnHelp;
 	
 	/**
 	 * Launch the application.
@@ -83,7 +87,7 @@ public class LensDemoApplication {
 		frame = new JFrame();
 		frame.setMinimumSize(new Dimension(800, 400));
 		frame.setTitle("Thin Lens Demonstration");
-		frame.setBounds(100, 100, 450, 300);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -92,12 +96,13 @@ public class LensDemoApplication {
 		frame.getContentPane().add(panelBottom, BorderLayout.SOUTH);
 		GridBagLayout gbl_panelBottom = new GridBagLayout();
 		gbl_panelBottom.columnWidths = new int[] {0, 0, 0, 125, 0};
-		gbl_panelBottom.rowHeights = new int[] {0, 0, 0, 0};
+		gbl_panelBottom.rowHeights = new int[] {0, 28, 28, 28};
 		gbl_panelBottom.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gbl_panelBottom.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
 		panelBottom.setLayout(gbl_panelBottom);
 		
 		JLabel lblSetTheValues = new JLabel("Set the values:");
+		lblSetTheValues.setToolTipText("f for focal length; u for distance of the object; v for distance of the image.");
 		GridBagConstraints gbc_lblSetTheValues = new GridBagConstraints();
 		gbc_lblSetTheValues.fill = GridBagConstraints.BOTH;
 		gbc_lblSetTheValues.anchor = GridBagConstraints.WEST;
@@ -106,15 +111,6 @@ public class LensDemoApplication {
 		gbc_lblSetTheValues.gridx = 0;
 		gbc_lblSetTheValues.gridy = 0;
 		panelBottom.add(lblSetTheValues, gbc_lblSetTheValues);
-		
-		
-		btnStartTutor = new JButton("Start Tutorial");
-		GridBagConstraints gbc_btnStartTutor = new GridBagConstraints();
-		gbc_btnStartTutor.fill = GridBagConstraints.BOTH;
-		gbc_btnStartTutor.insets = new Insets(0, 0, 5, 0);
-		gbc_btnStartTutor.gridx = 4;
-		gbc_btnStartTutor.gridy = 0;
-		panelBottom.add(btnStartTutor, gbc_btnStartTutor);
 		
 		//Construct spiner and sliders for f
 
@@ -207,6 +203,21 @@ public class LensDemoApplication {
 		gbc_spinnerU.gridx = 2;
 		gbc_spinnerU.gridy = 2;
 		panelBottom.add(spinnerU, gbc_spinnerU);
+		
+		btnHelp = new JButton("Help");
+		btnHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LensDemoHelpDialog helpDialog=new LensDemoHelpDialog();
+				//helpDialog.setModal(true);
+				helpDialog.setVisible(true);
+			}
+		});
+		GridBagConstraints gbc_btnHelp = new GridBagConstraints();
+		gbc_btnHelp.insets = new Insets(0, 0, 5, 0);
+		gbc_btnHelp.fill = GridBagConstraints.BOTH;
+		gbc_btnHelp.gridx = 4;
+		gbc_btnHelp.gridy = 2;
+		panelBottom.add(btnHelp, gbc_btnHelp);
 		
 		//Construct spiner and sliders for v
 
@@ -301,11 +312,49 @@ public class LensDemoApplication {
 		panelBottom.add(comboBoxSolve, gbc_comboBoxSolve);
 		comboBoxSolve.setSelectedItem("Solve for v");
 		
-		lblInfo = new JLabel("Hello World");
+		btnStartTutor = new JButton("Start Tutorial");
+		btnStartTutor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LensDemoTutorialDialog tutorDialog=new LensDemoTutorialDialog();
+				tutorDialog.setParentDemo(LensDemoApplication.this);
+				tutorDialog.setModal(true);
+				int tmpX=frame.getX()+frame.getWidth()-LensDemoTutorialDialog.DEFAULT_WIDTH;
+				//int tmpY=frame.getY()+frame.getHeight()-LensDemoTutorialDialog.DEFAULT_HEIGHT;
+				tutorDialog.setLocation(tmpX,frame.getY());
+				tutorDialog.setVisible(true);
+				
+			}
+		});
+		GridBagConstraints gbc_btnStartTutor = new GridBagConstraints();
+		gbc_btnStartTutor.fill = GridBagConstraints.BOTH;
+		gbc_btnStartTutor.insets = new Insets(0, 0, 5, 0);
+		gbc_btnStartTutor.gridx = 4;
+		gbc_btnStartTutor.gridy = 1;
+		panelBottom.add(btnStartTutor, gbc_btnStartTutor);
+		
+		spinnerSize = new JSpinner();
+		spinnerSize.setModel(new SpinnerNumberModel(DEFAULT_F, null, null, 1.0));
+		spinnerSize.getModel().addChangeListener(new ChangeListener(){
+			public void stateChanged(ChangeEvent e) {
+				SpinnerNumberModel source=(SpinnerNumberModel) e.getSource();
+				canvas.setObjectHeight(source.getNumber().doubleValue());
+				valueChanged();
+			}
+			
+		});
+		GridBagConstraints gbc_spinnerSize = new GridBagConstraints();
+		gbc_spinnerSize.fill = GridBagConstraints.BOTH;
+		gbc_spinnerSize.gridx = 4;
+		gbc_spinnerSize.gridy = 3;
+		panelBottom.add(spinnerSize, gbc_spinnerSize);
+		
+		lblInfo = new JLabel("Hello World.    An application created by Hanzhen, Lin.");
 		frame.getContentPane().add(lblInfo, BorderLayout.NORTH);
 		
 		canvas = new LensDemoCanvas();
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
+		canvas.setParentDemo(this);
+		
 	}
 	private void changeUnknown(String str,int stateChange){
 		if(stateChange==ItemEvent.SELECTED){
@@ -354,7 +403,6 @@ public class LensDemoApplication {
 		}else if (solveFor.equals(SolveFor.V)) {
 			v=1/(1/f-1/u);
 			spinnerV.setValue(v);
-			
 		}
 		identifyType(f,u,v);
 		canvas.draw(f,u,v);
@@ -390,5 +438,27 @@ public class LensDemoApplication {
 		}else{
 			lblImageSize.setText("Minimizing: "+df.format(v/u));
 		}
+	}
+	public void setValueExternal(double f,double u,double v,double size,SolveFor sf){
+		if(Double.isNaN(size)){size=DEFAULT_F;}
+		/*if(Double.isNaN(  f )){f   =DEFAULT_F;}
+		if(Double.isNaN(  u )){u   =DEFAULT_UV;}
+		if(Double.isNaN(u   )){u   =DEFAULT_UV;}*/
+		if(solveFor.equals(SolveFor.F)){
+			spinnerU.setValue(u);
+			spinnerV.setValue(v);
+		}else if (solveFor.equals(SolveFor.U)) {
+			spinnerF.setValue(f);
+			spinnerV.setValue(v);
+		}else if (solveFor.equals(SolveFor.V)) {
+			spinnerU.setValue(u);
+			spinnerF.setValue(f);
+		}
+		if(!Double.isNaN(size)){
+			spinnerSize.setValue(size);
+		}
+	}
+	public SolveFor getSolveFor(){
+		return solveFor;
 	}
 }

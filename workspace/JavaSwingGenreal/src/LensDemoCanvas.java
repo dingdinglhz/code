@@ -12,34 +12,54 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 
 public class LensDemoCanvas extends JPanel {
 
 	private static final long serialVersionUID = 892163485801692577L;
 	static final int SCALE=10;
-	static int dotR=3;
+	static int dotR=2;
 	static int textOffSet=15;
 	static double lensFactor=0.075;
-	static double objHeight=7.5,objWidth=2.0;
 	static Color lightBlue=new Color(0.0f,1.0f,1.0f,1.0f);
-	double f=7.5,u=15,v=15;
-	int ctrX,ctrY,maxY,maxX;
+	static Color ligthGray=new Color(1.0f,1.0f,1.0f,0.5f);
+	private double f=7.5,u=15,v=15;
+	private double objHeight=7.5,objWidth=2.0;
+	private int ctrX,ctrY,maxY,maxX;
 	private BufferedImage imgRO,imgVO,imgRI,imgVI;
+	private LensDemoApplication parentDemo;
 	//image of real object, virtual object, real image and virtual image.
 	
 	static Stroke thinDashed=new BasicStroke(1.0f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f, new float[]{5.0f}, 7.5f);
 	static Stroke thinSolid =new BasicStroke(1.0f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f);
-	static Stroke dashed    =new BasicStroke(2.0f,BasicStroke.CAP_ROUND,
+	static Stroke dashed    =new BasicStroke(1.5f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f, new float[]{10.0f}, 0.0f);
+	static Stroke thinGrid  =new BasicStroke(0.0f,BasicStroke.CAP_ROUND,
+            BasicStroke.JOIN_ROUND,1.0f);
 	
 	LensDemoCanvas(){
-		URL urlRO = LensDemoCanvas.class.getResource("imgRO.jpg");
-		URL urlVO = LensDemoCanvas.class.getResource("imgVO.jpg");
-		URL urlRI = LensDemoCanvas.class.getResource("imgRI.jpg");
-		URL urlVI = LensDemoCanvas.class.getResource("imgVI.jpg");
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				System.out.println("drag"+e.getPoint());
+				if(parentDemo!=null){
+					double uTmp=(double)(ctrX-e.getX())/SCALE;
+					double heightTmp=(double)(ctrY-e.getY())/SCALE;
+					parentDemo.setValueExternal(f, uTmp, v, heightTmp, 
+							LensDemoApplication.SolveFor.V);
+					//repaint();
+				}
+				
+			}
+		});
+		URL urlRO = LensDemoCanvas.class.getResource("imgRO.png");
+		URL urlVO = LensDemoCanvas.class.getResource("imgVO.png");
+		URL urlRI = LensDemoCanvas.class.getResource("imgRI.png");
+		URL urlVI = LensDemoCanvas.class.getResource("imgVI.png");
 		try {
 			imgRO=ImageIO.read(urlRO);
 			imgVO=ImageIO.read(urlVO);
@@ -51,11 +71,28 @@ public class LensDemoCanvas extends JPanel {
 					"Image loading failure",JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public void setObjectHeight(double objectHeight){
+		objHeight=objectHeight;
+		objWidth=objHeight*imgRO.getWidth()/imgRO.getHeight();
+	}
+	
+	private void drawGrid(Graphics2D g){
+		Stroke tmpStroke=g.getStroke();
+		g.setStroke(thinGrid);
+		g.setColor(Color.gray);
+		for(int ix=ctrX%SCALE; ix<maxX;ix+=SCALE){
+			g.drawLine(ix,0,ix,maxY);
+		}
+		for(int iy=ctrY%SCALE; iy<maxX;iy+=SCALE){
+			g.drawLine(0,iy,maxX,iy);
+		}
+		g.setStroke(tmpStroke);
 	}
 	
 	private void drawLens(Graphics2D g){
-		GradientPaint lensPaint=new GradientPaint(ctrX,0,Color.white,ctrX,ctrY,lightBlue,true);
-		g.setPaint(lensPaint);
 		Path2D lens=new Path2D.Double();
 		double control=lensFactor*maxY;
 		if(f>0){
@@ -70,7 +107,11 @@ public class LensDemoCanvas extends JPanel {
 			lens.quadTo(ctrX, ctrY, ctrX-control, 0);
 		}
 		lens.closePath();
+		GradientPaint lensPaint=new GradientPaint(ctrX,0,Color.white,ctrX,ctrY,lightBlue,true);
+		g.setPaint(lensPaint);
 		g.fill(lens);
+		g.setColor(lightBlue);
+		g.draw(lens);
 		//draw the converging/diverging lens.
 		
 		Stroke tmpStroke=g.getStroke();
@@ -94,6 +135,7 @@ public class LensDemoCanvas extends JPanel {
 		
 	}
 	private void drawObject(Graphics2D g){
+		g.setColor(Color.black);
 		int width=(int) (objWidth*SCALE);
 		int height=(int) (objHeight*SCALE);
 		BufferedImage img;
@@ -103,12 +145,12 @@ public class LensDemoCanvas extends JPanel {
 			img=imgVO;
 		}
 		g.drawImage(img,(int) (ctrX-SCALE*u-width/2),ctrY-height,width,height,null);
-		g.drawString("Obj", (int) (ctrX-SCALE*u-width/2),ctrY+textOffSet*2);
-		//drawRayObjectCenter(g, SCALE*u, objHeight*SCALE);
-		
+		g.drawString("Obj", (int) (ctrX-SCALE*u),ctrY+textOffSet*2);
+		g.fillOval((int) (ctrX-SCALE*u-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);
 	}
 	
 	private void drawImage(Graphics2D g){
+		g.setColor(Color.black);
 		int width=(int) (objWidth*SCALE*(-v/u));
 		int height=(int) (objHeight*SCALE*(-v/u));
 		BufferedImage img;
@@ -117,13 +159,13 @@ public class LensDemoCanvas extends JPanel {
 		}else{
 			img=imgVI;
 		}
-		if(v/u>0){
-			g.drawString("Img", (int) (ctrX+SCALE*v+width/2),ctrY-textOffSet);
-		}else{
-			g.drawString("Img", (int) (ctrX+SCALE*v+width/2),ctrY+textOffSet);
-		}
 		g.drawImage(img,(int) (ctrX+SCALE*v-width/2),ctrY-height,width,height,null);
-		//drawRayImageCenter(g,-SCALE*v,objHeight*SCALE*(-v/u));
+		if(v/u>0){
+			g.drawString("Img", (int) (ctrX+SCALE*v),ctrY-textOffSet);
+		}else{
+			g.drawString("Img", (int) (ctrX+SCALE*v),ctrY+textOffSet);
+		}
+		g.fillOval((int) (ctrX+SCALE*v-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);
 	}
 	
 	private void drawRayCenter(Graphics2D g){
@@ -216,11 +258,14 @@ public class LensDemoCanvas extends JPanel {
 		maxX=getWidth();
 		ctrX=maxX/2;
 		ctrY=maxY/2;
+		//g.clearRect(0, 0, maxX, maxY);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		//remember to turn ANTIALIASING on, or the lens will look ugly....
+		
 		drawLens(g2d);
+		drawGrid(g2d);
 		drawObject(g2d);
 		drawImage(g2d);
 		g2d.setColor(Color.red);
@@ -230,8 +275,7 @@ public class LensDemoCanvas extends JPanel {
 		g2d.setColor(Color.blue);
 		drawRayFocus(g2d);
 		System.out.println("paintComponent called");
-		
-		
+
 	}
 		
 	public void draw(double f,double u,double v){
@@ -240,6 +284,10 @@ public class LensDemoCanvas extends JPanel {
 		this.u=u;
 		this.v=v;
 		repaint();
+	}
+	
+	public void setParentDemo(LensDemoApplication parentDemo) {
+		this.parentDemo = parentDemo;
 	}
 
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+       <comment>Hello</comment>
+       <entry key="n">12</entry>
+       <entry key="f-0" > 7.5 </entry>
+       <entry key="f-1" > 10.0</entry>
+       <entry key="f-2" > 10.0</entry>
+       <entry key="f-3" > 10.0</entry>
+       <entry key="f-4" > 10.0</entry>
+       <entry key="f-5" > 10.0</entry>
+       <entry key="f-6" > 10.0</entry>
+       <entry key="f-7" >-10.0</entry>
+       <entry key="f-8" >-10.0</entry>
+       <entry key="f-9" >-10.0</entry>
+       <entry key="f-10">-10.0</entry>
+       <entry key="f-11">-10.0</entry>
+       <entry key="f-12">-10.0</entry>
+       <entry key="u-0" > 15.0</entry>
+       <entry key="u-1" > 30.0</entry>
+       <entry key="u-2" > 20.0</entry>
+       <entry key="u-3" > 15.0</entry>
+       <entry key="u-4" > 10.0</entry>
+       <entry key="u-5" > 5.0 </entry>
+       <entry key="u-6" >-15.0</entry>
+       <entry key="u-7" > 15.0</entry>
+       <entry key="u-8" >-30.0</entry>
+       <entry key="u-9" >-20.0</entry>
+       <entry key="u-10">-15.0</entry>
+       <entry key="u-11">-10.0</entry>
+       <entry key="u-12">-5.0 </entry>
+       <entry key="text-0" >text-0 </entry>
+       <entry key="text-1" >In the first scenario, we use a convex(converging) lens to form a virtul image. When the distance of the object is larger than 2 times of the focal length, a real image is formed on the other side of the lens, and it appears smaller than object.</entry>
+       <entry key="text-2" >text-2 </entry>
+       <entry key="text-3" >text-3 </entry>
+       <entry key="text-4" >text-4 </entry>
+       <entry key="text-5" >text-5 </entry>
+       <entry key="text-6" >text-6 </entry>
+       <entry key="text-7" >text-7 </entry>
+       <entry key="text-8" >text-8 </entry>
+       <entry key="text-9" >text-9 </entry>
+       <entry key="text-10">text-10</entry>
+       <entry key="text-11">text-11</entry>
+       <entry key="text-12">text-12</entry>
+</properties>
