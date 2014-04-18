@@ -45,7 +45,7 @@ public class LensDemoCanvas extends JPanel {
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				System.out.println("drag"+e.getPoint());
+				//System.out.println("drag"+e.getPoint());
 				if(parentDemo!=null){
 					double tmp=(double)(ctrX-e.getX())/SCALE;
 					double heightTmp=(double)(ctrY-e.getY())/SCALE;
@@ -274,12 +274,12 @@ public class LensDemoCanvas extends JPanel {
 		drawRayParallel(g2d);
 		g2d.setColor(Color.blue);
 		drawRayFocus(g2d);
-		System.out.println("paintComponent called");
+		//System.out.println("paintComponent called");
 
 	}
 		
 	public void draw(double f,double u,double v){
-		System.out.println("draw called f: "+f+" u: "+u+" v: "+v);
+		//System.out.println("draw called f: "+f+" u: "+u+" v: "+v);
 		if(f==0 || Double.isInfinite(f) || Double.isNaN(f)){
 			getGraphics().drawString( "f is zero/infinite/NaN, which is not able to draw", 50,50);
 			System.out.println("Zero/infinite/NaN f encountered inside LensDemoCanvas. Rejected.");

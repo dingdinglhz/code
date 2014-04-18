@@ -21,8 +21,8 @@ public class LensDemoTutorialDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -657503752198036664L;
-	static final int DEFAULT_WIDTH=350;
-	static final int DEFAULT_HEIGHT=200;
+	static final int DEFAULT_WIDTH=500;
+	static final int DEFAULT_HEIGHT=225;
 	private double f[],u[];
 	private String text[];
 	private int n;
@@ -64,13 +64,13 @@ public class LensDemoTutorialDialog extends JDialog {
 		panel.add(btnNext);
 		
 		textArea = new JTextArea();
+		textArea.setWrapStyleWord(true);
 		textArea.setMargin(new Insets(5, 5, 5, 5));
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
 		getContentPane().add(textArea, BorderLayout.CENTER);
 		
 		loadScript();
-		setScene(0);
 	}
 	
 	private void loadScript(){
@@ -94,11 +94,11 @@ public class LensDemoTutorialDialog extends JDialog {
 	    	f[i]=Double.parseDouble(prop.getProperty("f-"+i));
 	    	u[i]=Double.parseDouble(prop.getProperty("u-"+i));
 	    	text[i]=prop.getProperty("text-"+i);
-	    	System.out.println("i:"+i+" f:"+f[i]+" u:"+u[i]+" text:"+text[i]);
+	    	//System.out.println("i:"+i+" f:"+f[i]+" u:"+u[i]+" text:"+text[i]);
 	    }
 	}
 	
-	private void setScene(int newSceneNum){
+	protected void setScene(int newSceneNum){
 		if(newSceneNum>n || newSceneNum<0){
 			System.out.print("There is only "+n+" scenes. Scene No."+newSceneNum+" not Found");
 		}else{

@@ -320,8 +320,8 @@ public class LensDemoApplication {
 				int tmpX=frame.getX()+frame.getWidth()-LensDemoTutorialDialog.DEFAULT_WIDTH;
 				//int tmpY=frame.getY()+frame.getHeight()-LensDemoTutorialDialog.DEFAULT_HEIGHT;
 				tutorDialog.setLocation(tmpX,frame.getY());
+				tutorDialog.setScene(0);
 				tutorDialog.setVisible(true);
-				
 			}
 		});
 		GridBagConstraints gbc_btnStartTutor = new GridBagConstraints();
@@ -356,6 +356,7 @@ public class LensDemoApplication {
 		
 	}
 	private void changeUnknown(String str,int stateChange){
+		//System.out.println("Unknown changed: "+str+" state:"+stateChange);
 		if(stateChange==ItemEvent.SELECTED){
 			if(str.equals("Solve for f")){
 				solveFor=SolveFor.F;
@@ -384,7 +385,7 @@ public class LensDemoApplication {
 		}
 	}
 	private void valueChanged(){
-		System.out.println("valueChanged");
+		//System.out.println("valueChanged");
 		double f=((SpinnerNumberModel) spinnerF.getModel()).getNumber().doubleValue();
 		double u=((SpinnerNumberModel) spinnerU.getModel()).getNumber().doubleValue();
 		double v=((SpinnerNumberModel) spinnerV.getModel()).getNumber().doubleValue();
@@ -443,13 +444,18 @@ public class LensDemoApplication {
 		/*if(Double.isNaN(  f )){f   =DEFAULT_F;}
 		if(Double.isNaN(  u )){u   =DEFAULT_UV;}
 		if(Double.isNaN(u   )){u   =DEFAULT_UV;}*/
-		if(solveFor.equals(SolveFor.F)){
+		//System.out.println("Set Value External:"+sf);
+		//comboBoxSolve.setSelectedItem("Solve for v");
+		if(sf.equals(SolveFor.F)){
+			comboBoxSolve.setSelectedItem("Solve for f");
 			spinnerU.setValue(u);
 			spinnerV.setValue(v);
-		}else if (solveFor.equals(SolveFor.U)) {
+		}else if (sf.equals(SolveFor.U)) {
+			comboBoxSolve.setSelectedItem("Solve for u");
 			spinnerF.setValue(f);
 			spinnerV.setValue(v);
-		}else if (solveFor.equals(SolveFor.V)) {
+		}else if (sf.equals(SolveFor.V)) {
+			comboBoxSolve.setSelectedItem("Solve for v");
 			spinnerU.setValue(u);
 			spinnerF.setValue(f);
 		}

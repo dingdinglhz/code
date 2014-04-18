@@ -1,45 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-       <comment>Hello</comment>
-       <entry key="n">12</entry>
-       <entry key="f-0" > 7.5 </entry>
-       <entry key="f-1" > 10.0</entry>
-       <entry key="f-2" > 10.0</entry>
-       <entry key="f-3" > 10.0</entry>
-       <entry key="f-4" > 10.0</entry>
-       <entry key="f-5" > 10.0</entry>
-       <entry key="f-6" > 10.0</entry>
-       <entry key="f-7" >-10.0</entry>
-       <entry key="f-8" >-10.0</entry>
-       <entry key="f-9" >-10.0</entry>
-       <entry key="f-10">-10.0</entry>
-       <entry key="f-11">-10.0</entry>
-       <entry key="f-12">-10.0</entry>
-       <entry key="u-0" > 15.0</entry>
-       <entry key="u-1" > 30.0</entry>
-       <entry key="u-2" > 20.0</entry>
-       <entry key="u-3" > 15.0</entry>
-       <entry key="u-4" > 10.0</entry>
-       <entry key="u-5" > 5.0 </entry>
-       <entry key="u-6" >-15.0</entry>
-       <entry key="u-7" > 15.0</entry>
-       <entry key="u-8" >-30.0</entry>
-       <entry key="u-9" >-20.0</entry>
-       <entry key="u-10">-15.0</entry>
-       <entry key="u-11">-10.0</entry>
-       <entry key="u-12">-5.0 </entry>
-       <entry key="text-0" >text-0 </entry>
-       <entry key="text-1" >In the first scenario, we use a convex(converging) lens to form a virtul image. When the distance of the object is larger than 2 times of the focal length, a real image is formed on the other side of the lens, and it appears smaller than object.</entry>
-       <entry key="text-2" >text-2 </entry>
-       <entry key="text-3" >text-3 </entry>
-       <entry key="text-4" >text-4 </entry>
-       <entry key="text-5" >text-5 </entry>
-       <entry key="text-6" >text-6 </entry>
-       <entry key="text-7" >text-7 </entry>
-       <entry key="text-8" >text-8 </entry>
-       <entry key="text-9" >text-9 </entry>
-       <entry key="text-10">text-10</entry>
-       <entry key="text-11">text-11</entry>
-       <entry key="text-12">text-12</entry>
+<comment>Hello</comment>
+<entry key="n">12</entry>
+<entry key="f-0" > 7.5 </entry>
+<entry key="f-1" > 10.0</entry>
+<entry key="f-2" > 10.0</entry>
+<entry key="f-3" > 10.0</entry>
+<entry key="f-4" > 10.0</entry>
+<entry key="f-5" > 10.0</entry>
+<entry key="f-6" > 10.0</entry>
+<entry key="f-7" >-10.0</entry>
+<entry key="f-8" >-10.0</entry>
+<entry key="f-9" >-10.0</entry>
+<entry key="f-10">-10.0</entry>
+<entry key="f-11">-10.0</entry>
+<entry key="f-12">-10.0</entry>
+<entry key="u-0" > 15.0</entry>
+<entry key="u-1" > 30.0</entry>
+<entry key="u-2" > 20.0</entry>
+<entry key="u-3" > 15.0</entry>
+<entry key="u-4" > 10.0</entry>
+<entry key="u-5" > 5.0 </entry>
+<entry key="u-6" >-15.0</entry>
+<entry key="u-7" > 15.0</entry>
+<entry key="u-8" >-5.0 </entry>
+<entry key="u-9" >-10.0</entry>
+<entry key="u-10">-15.0</entry>
+<entry key="u-11">-20.0</entry>
+<entry key="u-12">-30.0</entry>
+<entry key="text-0" >In this demonstration, you will understand how image is formed by thin lenses.
+Notice that the light rays refracted by lenses follows these 3 patterns:
+1)Rays parallel to the principle axis pass through focal point F after refraction.
+2)Rays passing through F' is parallel to the principle axis after refraction.
+3)Rays passing through optical center O is not refracted.
+By applying these principles, we can predict how images are formed in different scenarios.</entry>
+<entry key="text-1" >In the first scenario, we use a convex (converging) lens and place the object far from the lens.
+We can apply all the 3 patterns introduced earlier to draw the ray diagram. Where the 3 rays intersects is where the image is formed.
+We can also use the formula 1/f=1/u+1/v to predict how the images are formed.
+When the distance of the object is larger than 2 times of the focal length, a real image is formed on the other side of the lens, and it appears smaller than object.</entry>
+<entry key="text-2" >We gradually move the object closer to the lens. When the distance of the object is exactly 2 times of the focal length, the ray diagram appears to be symmetrical, and a real image of the same size is formed.</entry>
+<entry key="text-3" >If distance of the object is between 1*f and 2*f, the image formed is still real, but is larger than the object.</entry>
+<entry key="text-4" >When the distance of the object equals the focal length, the ray passing through F' cannot be drawn, and the remaining two rays are parallel to each other and has no intersection. Thus, no image is formed.</entry>
+<entry key="text-5" >When the object is placed between F' and optical center O, the rays diverge on the other side. However, if we extend the rays in the opposite direction (indicated by the dotted lines), they still intersect, and a image is still formed. However, since the rays do not intersects phisically, the image is called a virtual image, and distance of it is negative.
+In this senario, a larger virtual image is formed.</entry>
+<entry key="text-6" >Since the image can be virtual, the object can also be "virtual", which means the rays do not intersect physically, but their extensions do intersect at where the image is formed. It has a negative distance to the optical ceter.
+This "virtual" object can be created in realistic if the object itself is a image created by another lens, and the current lens is placed before where that image is formed.
+Despite being unintuitive, we can still apply the 3 principles as well as the equation to predict that a smaller real image is formed in this scenario! Such an amazing result!
+</entry>
+<entry key="text-7" >After introducing all the scenarios of images formed by convex lenses, we move on to concave (diverging) lenses, which have a negative focal lens.
+Again, we can apply the 3 patterns to find the location of the image. However, notice that since the locations of F and F' are exchanged, the rays might not pass through F or F' phisicall. Instead it is their extensions that pass through these points.
+As you can see, if the object is real, the concave lens always form a smaller virtual image.</entry>
+<entry key="text-8" >If the object is virtual, the patterns of images formed by concave lens is a lot more interesting and seems symmetrical to how convex lenses form images of real objects.
+If the virtual objet is between O and F', a larger real image is formed by a concave lens. Quite unituitive, right?!</entry>
+<entry key="text-9" >If the virtual objet is placed at F', again the rays are parallel and no image is formed.</entry>
+<entry key="text-10">If the virtual objet is between F' and 2F', a larger virtual image is formed.</entry>
+<entry key="text-11">If the virtual objet is placed at 2F', a virtual image of the equal size is formed.</entry>
+<entry key="text-12">If the virtual objet is placed beyound 2F', a smaller virtual image is formed.
+Now you have encountered all the scenarios of how images are formed by a thin lens!
+Finish this tutorial and you can continue to play around with the virtual demonstration.
+</entry>
 </properties>
