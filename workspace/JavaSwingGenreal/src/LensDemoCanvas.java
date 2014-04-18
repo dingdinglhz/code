@@ -47,9 +47,9 @@ public class LensDemoCanvas extends JPanel {
 			public void mouseDragged(MouseEvent e) {
 				System.out.println("drag"+e.getPoint());
 				if(parentDemo!=null){
-					double uTmp=(double)(ctrX-e.getX())/SCALE;
+					double tmp=(double)(ctrX-e.getX())/SCALE;
 					double heightTmp=(double)(ctrY-e.getY())/SCALE;
-					parentDemo.setValueExternal(f, uTmp, v, heightTmp, 
+					parentDemo.setValueExternal(f, tmp, v, heightTmp, 
 							LensDemoApplication.SolveFor.V);
 					//repaint();
 				}
@@ -280,6 +280,19 @@ public class LensDemoCanvas extends JPanel {
 		
 	public void draw(double f,double u,double v){
 		System.out.println("draw called f: "+f+" u: "+u+" v: "+v);
+		if(f==0 || Double.isInfinite(f) || Double.isNaN(f)){
+			getGraphics().drawString( "f is zero/infinite/NaN, which is not able to draw", 50,50);
+			System.out.println("Zero/infinite/NaN f encountered inside LensDemoCanvas. Rejected.");
+			JOptionPane.showMessageDialog(this.getParent(), "f cannot be equal to zero/infinite/NaN!", 
+					"Invalid Focal Length",JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if(Double.isInfinite(u) || Double.isNaN(u)){
+			getGraphics().drawString( "u is infinite/NaN, which is not able to draw", 50,50);
+			JOptionPane.showMessageDialog(this.getParent(), "u is infinite/NaN, which is not able to draw", 
+					"Unable to draw diagram due to out-of-range value.",JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		this.f=f;
 		this.u=u;
 		this.v=v;

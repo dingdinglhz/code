@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
@@ -389,11 +388,11 @@ public class LensDemoApplication {
 		double f=((SpinnerNumberModel) spinnerF.getModel()).getNumber().doubleValue();
 		double u=((SpinnerNumberModel) spinnerU.getModel()).getNumber().doubleValue();
 		double v=((SpinnerNumberModel) spinnerV.getModel()).getNumber().doubleValue();
-		if(f==0){
+		/*if(f==0){
 			JOptionPane.showMessageDialog(frame, "f cannot be equal to zero!", 
 					"Invalid Focal Length",JOptionPane.WARNING_MESSAGE);
 			return;
-		}
+		}*/
 		if(solveFor.equals(SolveFor.F)){
 			f=1/(1/u+1/v);
 			spinnerF.setValue(f);
