@@ -25,6 +25,7 @@ public class LensDemoCanvas extends JPanel {
 	static double lensFactor=0.075;
 	static Color lightBlue=new Color(0.0f,1.0f,1.0f,1.0f);
 	static Color ligthGray=new Color(1.0f,1.0f,1.0f,0.5f);
+	static double arrowX=-5,arrowYd=5,arrowYu=-5;
 	private double f=7.5,u=15,v=15;
 	private double objHeight=7.5,objWidth=2.0;
 	private int ctrX,ctrY,maxY,maxX;
@@ -77,6 +78,23 @@ public class LensDemoCanvas extends JPanel {
 	public void setObjectHeight(double objectHeight){
 		objHeight=objectHeight;
 		objWidth=objHeight*imgRO.getWidth()/imgRO.getHeight();
+		//a setter for the object's height.
+	}
+	
+	private void drawArrow(Graphics2D g, int x1,int y1,int x2,int y2){
+		g.drawLine(x1,y1,x2,y2);
+		int xm=(x1+x2)/2, ym=(y1+y2)/2;
+		double dx=(x2-x1),dy=(y2-y1);
+		double dz=Math.sqrt(dx*dx+dy*dy);
+		double cos=dx/dz,sin=dy/dz;//cos and sin is calculated.
+		double aXu=cos*arrowX-sin*arrowYu;
+		double aYu=sin*arrowX+cos*arrowYu;
+		double aXd=cos*arrowX-sin*arrowYd;
+		double aYd=sin*arrowX+cos*arrowYd;
+		//the offset of arrow is calculate using a rotational matrix
+		g.drawLine((int)(xm+aXu),(int)(ym+aYu),xm,ym);
+		g.drawLine((int)(xm+aXd),(int)(ym+aYd),xm,ym);
+		//draw the arrows according to the calculation made.		
 	}
 	
 	private void drawGrid(Graphics2D g){
@@ -174,14 +192,14 @@ public class LensDemoCanvas extends JPanel {
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(thinSolid);
 		if(u>0){
-			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY),ctrX,ctrY);
-			g.drawLine(ctrX, ctrY,  maxX, (int) (ctrY+(maxX-ctrX)*slope));
+			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY),ctrX,ctrY);
+			drawArrow(g,ctrX, ctrY,  maxX, (int) (ctrY+(maxX-ctrX)*slope));
 			g.setStroke(thinDashed);
-			g.drawLine(0, (int) (ctrY-ctrX*slope),(int)(ctrX-uX), (int)(ctrY-uY));
+			drawArrow(g,0, (int) (ctrY-ctrX*slope),(int)(ctrX-uX), (int)(ctrY-uY));
 		}else{
-			g.drawLine(0, (int) (ctrY-ctrX*slope), ctrX, ctrY);
-			g.drawLine(ctrX, ctrY, (int)(ctrX-uX), (int)(ctrY-uY));
-			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY),maxX, (int) (ctrY+(maxX-ctrX)*slope));
+			drawArrow(g,0, (int) (ctrY-ctrX*slope), ctrX, ctrY);
+			drawArrow(g,ctrX, ctrY, (int)(ctrX-uX), (int)(ctrY-uY));
+			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY),maxX, (int) (ctrY+(maxX-ctrX)*slope));
 		}
 		g.setStroke(tmpStroke);
 	}
@@ -191,28 +209,28 @@ public class LensDemoCanvas extends JPanel {
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(thinSolid);
 		if(u>0){
-			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
+			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
 		}else{
-			g.drawLine(0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
+			drawArrow(g,0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
 			g.setStroke(thinDashed);
-			g.drawLine(ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
+			drawArrow(g,ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
 		}
 		if(f>0){
 			g.setStroke(thinSolid);
-			g.drawLine(ctrX, (int)(ctrY-uY), (int)(ctrX+fX), ctrY);
+			drawArrow(g,ctrX, (int)(ctrY-uY), (int)(ctrX+fX), ctrY);
 			double endY=ctrY+(maxX-ctrX-fX)*uY/fX;
-			g.drawLine((int)(ctrX+fX), ctrY , maxX, (int)endY);
+			drawArrow(g,(int)(ctrX+fX), ctrY , maxX, (int)endY);
 			endY=ctrY-uY-(ctrX)*uY/fX;
 			g.setStroke(thinDashed);
-			g.drawLine(0, (int) endY, ctrX,(int)(ctrY-uY));
+			drawArrow(g,0, (int) endY, ctrX,(int)(ctrY-uY));
 		}else{
 			g.setStroke(thinDashed);
-			g.drawLine((int)(ctrX+fX), ctrY, ctrX, (int)(ctrY-uY));
+			drawArrow(g,(int)(ctrX+fX), ctrY, ctrX, (int)(ctrY-uY));
 			double endY=ctrY-uY-(ctrX)*uY/fX;
-			g.drawLine(0, (int) endY, (int)(ctrX+fX), ctrY);
+			drawArrow(g,0, (int) endY, (int)(ctrX+fX), ctrY);
 			g.setStroke(thinSolid);
 			endY=ctrY+(maxX-ctrX-fX)*uY/fX;
-			g.drawLine(ctrX, (int)(ctrY-uY), maxX, (int)endY);
+			drawArrow(g,ctrX, (int)(ctrY-uY), maxX, (int)endY);
 		}
 		g.setStroke(tmpStroke);
 	}
@@ -226,27 +244,27 @@ public class LensDemoCanvas extends JPanel {
 		double offSetY=ctrY+slope*uX-uY;
 		g.setStroke(thinSolid);
 		if(u>0 && f>0){
-			g.drawLine((int)(ctrX-uX), (int)(ctrY-uY), (int)(ctrX-fX), ctrY);
-			g.drawLine((int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
+			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), (int)(ctrX-fX), ctrY);
+			drawArrow(g,(int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
 		}else if(u<0 && f>0){
-			g.drawLine(0,(int)(ctrY-(ctrX-fX)*slope),(int)(ctrX-fX),ctrY);
-			g.drawLine((int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
+			drawArrow(g,0,(int)(ctrY-(ctrX-fX)*slope),(int)(ctrX-fX),ctrY);
+			drawArrow(g,(int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
 			g.setStroke(thinDashed);
-			g.drawLine(ctrX, (int)offSetY,(int)(ctrX-uX),(int)(ctrY-uY));
+			drawArrow(g,ctrX, (int)offSetY,(int)(ctrX-uX),(int)(ctrY-uY));
 		}else if(u>0 && f<0){
-			g.drawLine((int)(ctrX-uX),(int)(ctrY-uY),ctrX,(int)offSetY);
+			drawArrow(g,(int)(ctrX-uX),(int)(ctrY-uY),ctrX,(int)offSetY);
 			g.setStroke(thinDashed);
-			g.drawLine(ctrX,(int)offSetY ,(int)(ctrX-fX),ctrY);
+			drawArrow(g,ctrX,(int)offSetY ,(int)(ctrX-fX),ctrY);
 		}else if(u<0 && f<0){
-			g.drawLine(0,(int)(ctrY-(ctrX-fX)*slope),ctrX, (int) offSetY);
+			drawArrow(g,0,(int)(ctrY-(ctrX-fX)*slope),ctrX, (int) offSetY);
 			g.setStroke(thinDashed);
-			g.drawLine(ctrX, (int) offSetY, (int)(ctrX-fX), ctrY);
-			g.drawLine((int)(ctrX-fX), ctrY, (int)(ctrX-uX),(int)(ctrY-uY));
+			drawArrow(g,ctrX, (int) offSetY, (int)(ctrX-fX), ctrY);
+			drawArrow(g,(int)(ctrX-fX), ctrY, (int)(ctrX-uX),(int)(ctrY-uY));
 		}
 		g.setStroke(thinDashed);
-		g.drawLine(0,(int)offSetY,ctrX,(int)offSetY);
+		drawArrow(g,0,(int)offSetY,ctrX,(int)offSetY);
 		g.setStroke(thinSolid);
-		g.drawLine(ctrX,(int)offSetY,maxX,(int)offSetY);
+		drawArrow(g,ctrX,(int)offSetY,maxX,(int)offSetY);
 		g.setStroke(tmpStroke);
 	}
 	
