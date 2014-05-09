@@ -1,3 +1,22 @@
+/*--------------------------------------------------------------------------------------*/
+/*  Program: LensDemoApplication                                                        */
+/* 	An application that is able to solve an optical system involving one thin lens. It  */
+/*  is able to solve the thin lens imaging equation 1/f = 1/v + 1/u to give an answer.  */
+/*  Also, it is able to draw a clear optics ray diagram to illustrate graphically how   */
+/*  the image is formed by refracting light rays using a thin lens. A brief tutorial is */
+/*  implemented to guide the user recognize all typical patterns of how images are 	    */
+/*  formed. As an educational program, learning is embeded in the demonstrations.       */
+/*--------------------------------------------------------------------------------------*/
+/*  Source File:LensDemoTutorialDialog.java                                                       */
+/*  The class that implements the tutorial, which guide the user to learn different     */
+/*  patterns of thin lens imaging.                                                      */
+/*--------------------------------------------------------------------------------------*/
+/*  Author: Hanzhen, Lin                                                                */
+/*  Date:  May, 8th, 2014                                                               */
+/*--------------------------------------------------------------------------------------*/
+/*  Input :Tutorial scripts loaded from *.jar file.                                     */
+/*  Output:Pre-set f and u values (passed to the main window); explanatory text.        */
+/*--------------------------------------------------------------------------------------*/
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.InputStream;
