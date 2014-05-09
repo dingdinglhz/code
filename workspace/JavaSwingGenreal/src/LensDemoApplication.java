@@ -69,15 +69,15 @@ public class LensDemoApplication {
 	static final double DEFAULT_F=7.5;
 	static final double MAX_UV=40;
 	static final double DEFAULT_UV=15.0;
-	//important constances related to max/min values of f, u and v
+	//important constants related to max/min values of f, u and v
 	static final int SLIDER_R=100;
-	//constance that decides what the number in the slider represents.
+	//constant that decides what the number in the slider represents.
 	
 	enum SolveFor{
 		F,U,V;
 	}
 	private SolveFor solveFor;
-	//enum(constance class) that describes which variable to be solved for.
+	//enum(constant class) that describes which variable to be solved for.
 
 
 	public static void main(String[] args) {

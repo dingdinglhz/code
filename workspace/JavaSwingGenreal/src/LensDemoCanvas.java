@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-
+//necessary imports.
 
 public class LensDemoCanvas extends JPanel {
 
@@ -42,16 +42,9 @@ public class LensDemoCanvas extends JPanel {
 	static int dotR=2;
 	static int textOffSet=15;
 	static double lensFactor=0.075;
+	static double arrowX=-5,arrowYd=5,arrowYu=-5;
 	static Color lightBlue=new Color(0.0f,1.0f,1.0f,1.0f);
 	static Color ligthGray=new Color(1.0f,1.0f,1.0f,0.5f);
-	static double arrowX=-5,arrowYd=5,arrowYu=-5;
-	private double f=7.5,u=15,v=15;
-	private double objHeight=7.5,objWidth=2.0;
-	private int ctrX,ctrY,maxY,maxX;
-	private BufferedImage imgRO,imgVO,imgRI,imgVI;
-	private LensDemoApplication parentDemo;
-	//image of real object, virtual object, real image and virtual image.
-	
 	static Stroke thinDashed=new BasicStroke(1.0f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f, new float[]{5.0f}, 7.5f);
 	static Stroke thinSolid =new BasicStroke(1.0f,BasicStroke.CAP_ROUND,
@@ -60,8 +53,22 @@ public class LensDemoCanvas extends JPanel {
             BasicStroke.JOIN_ROUND,1.0f, new float[]{10.0f}, 0.0f);
 	static Stroke thinGrid  =new BasicStroke(0.0f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f);
+	//Useful constants related to the shape/color/line style/arrown style/
+	//dot style/graphing scale/lens stryle/text style.
+	
+	private double f=7.5,u=15,v=15;
+	//The crucial value of f, u and v.
+	private double objHeight=7.5,objWidth=2.0;
+	//The dimension of the picture representing the object
+	private int ctrX,ctrY,maxY,maxX;
+	//Useful variable to store the coorinate of the center and bottom right corner.
+	private BufferedImage imgRO,imgVO,imgRI,imgVI;
+	//image of real object, virtual object, real image and virtual image.
+	private LensDemoApplication parentDemo;
+	//Access to the main program it belongs.
 	
 	LensDemoCanvas(){
+		//Constructor of the canvas panel.
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
@@ -73,39 +80,43 @@ public class LensDemoCanvas extends JPanel {
 							LensDemoApplication.SolveFor.V);
 					//repaint();
 				}
-				
+				//Add mouse drag control to set the size and position of the object.
 			}
 		});
 		URL urlRO = LensDemoCanvas.class.getResource("imgRO.png");
 		URL urlVO = LensDemoCanvas.class.getResource("imgVO.png");
 		URL urlRI = LensDemoCanvas.class.getResource("imgRI.png");
 		URL urlVI = LensDemoCanvas.class.getResource("imgVI.png");
+		//URLs that directs to the pictures representing the object/image.
 		try {
 			imgRO=ImageIO.read(urlRO);
 			imgVO=ImageIO.read(urlVO);
 			imgRI=ImageIO.read(urlRI);
 			imgVI=ImageIO.read(urlVI);
 			objWidth=objHeight*imgRO.getWidth()/imgRO.getHeight();
+			//Load the images and adjust the height/width ratio.
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Unable to load necessary images.",
 					"Image loading failure",JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+			//Image not found exception.
 		}
 		
 	}
 	
 	public void setObjectHeight(double objectHeight){
+		//A setter for the object's height. Width is automatically calculated.
 		objHeight=objectHeight;
-		objWidth=objHeight*imgRO.getWidth()/imgRO.getHeight();
-		//a setter for the object's height.
+		objWidth=objHeight*imgRO.getWidth()/imgRO.getHeight();	 
 	}
 	
 	private void drawArrow(Graphics2D g, int x1,int y1,int x2,int y2){
-		g.drawLine(x1,y1,x2,y2);
-		int xm=(x1+x2)/2, ym=(y1+y2)/2;
-		double dx=(x2-x1),dy=(y2-y1);
+		//A method that draws an line with arrow from (x1,y1) to (x2,y2);.
+		g.drawLine(x1,y1,x2,y2); //Draw the line first.
+		int xm=(x1+x2)/2, ym=(y1+y2)/2; //Calculate the midpoint.
+		double dx=(x2-x1),dy=(y2-y1); 
 		double dz=Math.sqrt(dx*dx+dy*dy);
-		double cos=dx/dz,sin=dy/dz;//cos and sin is calculated.
+		double cos=dx/dz,sin=dy/dz;//Calculate values of cos and sin.
 		double aXu=cos*arrowX-sin*arrowYu;
 		double aYu=sin*arrowX+cos*arrowYu;
 		double aXd=cos*arrowX-sin*arrowYd;
@@ -117,6 +128,7 @@ public class LensDemoCanvas extends JPanel {
 	}
 	
 	private void drawGrid(Graphics2D g){
+		//draw a grid of dashed line in the background.
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(thinGrid);
 		g.setColor(Color.gray);
@@ -130,14 +142,15 @@ public class LensDemoCanvas extends JPanel {
 	}
 	
 	private void drawLens(Graphics2D g){
+		//Draw the thin lens in the center.
 		Path2D lens=new Path2D.Double();
 		double control=lensFactor*maxY;
-		if(f>0){
+		if(f>0){ //If it is convex lens.
 			lens.moveTo(ctrX,0);
 			lens.quadTo(ctrX+control, ctrY, ctrX, maxY);
 			lens.quadTo(ctrX-control, ctrY, ctrX, 0);
 		}
-		else{
+		else{ //Concava lens.
 			lens.moveTo(ctrX+control,0);
 			lens.quadTo(ctrX, ctrY, ctrX+control, maxY);
 			lens.lineTo(ctrX-control, maxY);
@@ -149,7 +162,7 @@ public class LensDemoCanvas extends JPanel {
 		g.fill(lens);
 		g.setColor(lightBlue);
 		g.draw(lens);
-		//draw the converging/diverging lens.
+		//fill the converging/diverging lens with boundary.
 		
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(dashed);
@@ -168,10 +181,9 @@ public class LensDemoCanvas extends JPanel {
 		g.drawString("O", ctrX, ctrY+textOffSet);
 		g.setStroke(tmpStroke);
 		//drawing the principle axis and label special dots.
-		
-		
 	}
 	private void drawObject(Graphics2D g){
+		//Draw the object by putting a picture in the correct position with correct size.
 		g.setColor(Color.black);
 		int width=(int) (objWidth*SCALE);
 		int height=(int) (objHeight*SCALE);
@@ -180,13 +192,14 @@ public class LensDemoCanvas extends JPanel {
 			img=imgRO;
 		}else{
 			img=imgVO;
-		}
-		g.drawImage(img,(int) (ctrX-SCALE*u-width/2),ctrY-height,width,height,null);
-		g.drawString("Obj", (int) (ctrX-SCALE*u),ctrY+textOffSet*2);
-		g.fillOval((int) (ctrX-SCALE*u-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);
+		}//Check if it is real or virtual.
+		g.drawImage(img,(int) (ctrX-SCALE*u-width/2),ctrY-height,width,height,null);//draw
+		g.drawString("Obj", (int) (ctrX-SCALE*u),ctrY+textOffSet*2); //label
+		g.fillOval((int) (ctrX-SCALE*u-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);//dot
 	}
 	
 	private void drawImage(Graphics2D g){
+		//Draw the image by putting a picture in the correct position with correct size.
 		g.setColor(Color.black);
 		int width=(int) (objWidth*SCALE*(-v/u));
 		int height=(int) (objHeight*SCALE*(-v/u));
@@ -195,46 +208,49 @@ public class LensDemoCanvas extends JPanel {
 			img=imgRI;
 		}else{
 			img=imgVI;
-		}
-		g.drawImage(img,(int) (ctrX+SCALE*v-width/2),ctrY-height,width,height,null);
+		}//Check if it is real or virtual.
+		g.drawImage(img,(int) (ctrX+SCALE*v-width/2),ctrY-height,width,height,null);//Draw
 		if(v/u>0){
 			g.drawString("Img", (int) (ctrX+SCALE*v),ctrY-textOffSet);
 		}else{
 			g.drawString("Img", (int) (ctrX+SCALE*v),ctrY+textOffSet);
-		}
-		g.fillOval((int) (ctrX+SCALE*v-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);
+		}//Label (above or below the principle axis)
+		g.fillOval((int) (ctrX+SCALE*v-dotR/2.0), ctrY-dotR, dotR*2, dotR*2);//dot
 	}
 	
 	private void drawRayCenter(Graphics2D g){
+		//the method that draws the special light ray crossing the optical center.
 		double uX=SCALE*u,uY=objHeight*SCALE;
-		double slope=uY/uX;
+		double slope=uY/uX; //calculate slope.
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(thinSolid);
-		if(u>0){
+		if(u>0){ //if the object is real
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY),ctrX,ctrY);
 			drawArrow(g,ctrX, ctrY,  maxX, (int) (ctrY+(maxX-ctrX)*slope));
 			g.setStroke(thinDashed);
 			drawArrow(g,0, (int) (ctrY-ctrX*slope),(int)(ctrX-uX), (int)(ctrY-uY));
-		}else{
+		}else{  //if the object is virtual
 			drawArrow(g,0, (int) (ctrY-ctrX*slope), ctrX, ctrY);
 			drawArrow(g,ctrX, ctrY, (int)(ctrX-uX), (int)(ctrY-uY));
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY),maxX, (int) (ctrY+(maxX-ctrX)*slope));
 		}
-		g.setStroke(tmpStroke);
+		g.setStroke(tmpStroke); //set the line style back
 	}
 	private void drawRayParallel(Graphics2D g){
+		//the method that draws the special light ray that is parallel to the principle axis
+		//and crosses the focus after refraction.
 		double uX=SCALE*u,uY=objHeight*SCALE;
 		double fX=SCALE*f;
 		Stroke tmpStroke=g.getStroke();
 		g.setStroke(thinSolid);
-		if(u>0){
+		if(u>0){//if the object is real, draw a horizontal line
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
-		}else{
+		}else{//if the object is cirtual, draw a partially dashed horizontal line
 			drawArrow(g,0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
 			g.setStroke(thinDashed);
 			drawArrow(g,ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
 		}
-		if(f>0){
+		if(f>0){  //if the lens is convex.
 			g.setStroke(thinSolid);
 			drawArrow(g,ctrX, (int)(ctrY-uY), (int)(ctrX+fX), ctrY);
 			double endY=ctrY+(maxX-ctrX-fX)*uY/fX;
@@ -242,7 +258,7 @@ public class LensDemoCanvas extends JPanel {
 			endY=ctrY-uY-(ctrX)*uY/fX;
 			g.setStroke(thinDashed);
 			drawArrow(g,0, (int) endY, ctrX,(int)(ctrY-uY));
-		}else{
+		}else{  //if the lens is virtual.
 			g.setStroke(thinDashed);
 			drawArrow(g,(int)(ctrX+fX), ctrY, ctrX, (int)(ctrY-uY));
 			double endY=ctrY-uY-(ctrX)*uY/fX;
@@ -255,36 +271,38 @@ public class LensDemoCanvas extends JPanel {
 	}
 	
 	private void drawRayFocus(Graphics2D g){
-		if(u/f<=1 && u/f>=0){return;}
+		if(u/f<=1 && u/f>=0){return;} //the case 0<= u/f <=1 is ignored for now.
 		double uX=SCALE*u,uY=objHeight*SCALE;
 		double fX=SCALE*f;
 		Stroke tmpStroke=g.getStroke();
 		double slope=uY/(uX-fX);
-		double offSetY=ctrY+slope*uX-uY;
+		double offSetY=ctrY+slope*uX-uY; 
+		//get the intersec between the lens and the line from object to F'
 		g.setStroke(thinSolid);
-		if(u>0 && f>0){
+		if(u>0 && f>0){  //real object & convex lens
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), (int)(ctrX-fX), ctrY);
 			drawArrow(g,(int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
-		}else if(u<0 && f>0){
+		}else if(u<0 && f>0){  //virtual object & convex lens
 			drawArrow(g,0,(int)(ctrY-(ctrX-fX)*slope),(int)(ctrX-fX),ctrY);
 			drawArrow(g,(int)(ctrX-fX), ctrY, ctrX, (int) offSetY);
 			g.setStroke(thinDashed);
 			drawArrow(g,ctrX, (int)offSetY,(int)(ctrX-uX),(int)(ctrY-uY));
-		}else if(u>0 && f<0){
+		}else if(u>0 && f<0){  //real object & concave lens
 			drawArrow(g,(int)(ctrX-uX),(int)(ctrY-uY),ctrX,(int)offSetY);
 			g.setStroke(thinDashed);
 			drawArrow(g,ctrX,(int)offSetY ,(int)(ctrX-fX),ctrY);
-		}else if(u<0 && f<0){
+		}else if(u<0 && f<0){  //virtual object & concave lens
 			drawArrow(g,0,(int)(ctrY-(ctrX-fX)*slope),ctrX, (int) offSetY);
 			g.setStroke(thinDashed);
 			drawArrow(g,ctrX, (int) offSetY, (int)(ctrX-fX), ctrY);
 			drawArrow(g,(int)(ctrX-fX), ctrY, (int)(ctrX-uX),(int)(ctrY-uY));
-		}
+		}// draw the ray before refraction.
 		g.setStroke(thinDashed);
 		drawArrow(g,0,(int)offSetY,ctrX,(int)offSetY);
 		g.setStroke(thinSolid);
 		drawArrow(g,ctrX,(int)offSetY,maxX,(int)offSetY);
 		g.setStroke(tmpStroke);
+		// draw the horizontal ray before refraction.
 	}
 	
 	protected void paintComponent(Graphics g){
@@ -295,7 +313,7 @@ public class LensDemoCanvas extends JPanel {
 		maxX=getWidth();
 		ctrX=maxX/2;
 		ctrY=maxY/2;
-		//g.clearRect(0, 0, maxX, maxY);
+		//g.clearRect(0, 0, maxX, maxY); use original background. no need to clear it.
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -311,6 +329,7 @@ public class LensDemoCanvas extends JPanel {
 		drawRayParallel(g2d);
 		g2d.setColor(Color.blue);
 		drawRayFocus(g2d);
+		//draw the ray diagram in separate steps.
 		//System.out.println("paintComponent called");
 
 	}
@@ -323,21 +342,22 @@ public class LensDemoCanvas extends JPanel {
 			JOptionPane.showMessageDialog(this.getParent(), "f cannot be equal to zero/infinite/NaN!", 
 					"Invalid Focal Length",JOptionPane.WARNING_MESSAGE);
 			return;
-		}
+		}  //Focal length cannot be 0, infinity or NaN.
 		if(Double.isInfinite(u) || Double.isNaN(u)){
 			getGraphics().drawString( "u is infinite/NaN, which is not able to draw", 50,50);
 			JOptionPane.showMessageDialog(this.getParent(), "u is infinite/NaN, which is not able to draw", 
 					"Unable to draw diagram due to out-of-range value.",JOptionPane.WARNING_MESSAGE);
 			return;
-		}
+		}  //Distance of object cannot be infinity or NaN.
 		this.f=f;
 		this.u=u;
 		this.v=v;
+		//update the values of f,u and v according to new value passed from the main window.
 		repaint();
 	}
 	
 	public void setParentDemo(LensDemoApplication parentDemo) {
-		this.parentDemo = parentDemo;
+		this.parentDemo = parentDemo; //establish the access to the main window.
 	}
 
 }

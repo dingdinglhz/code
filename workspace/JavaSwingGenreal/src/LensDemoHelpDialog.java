@@ -24,7 +24,7 @@ import java.util.Scanner;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-
+//necessary imports.
 
 public class LensDemoHelpDialog extends JDialog {
 
@@ -35,16 +35,18 @@ public class LensDemoHelpDialog extends JDialog {
 	public LensDemoHelpDialog() {
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+		//Display the dialog.
 		InputStream in = LensDemoHelpDialog.class.getResourceAsStream("helpMessage.html");
 		Scanner scan=new Scanner(in,"UTF-8");
 		String helpMessage="";
 		while(scan.hasNext()){
 			helpMessage+=scan.nextLine();
 		}
+		//Load the help message from resource file.
 		JLabel lblHelpInfo = new JLabel(helpMessage);
 		lblHelpInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHelpInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		getContentPane().add(lblHelpInfo);
+		//Display the help message.
 	}
 }
