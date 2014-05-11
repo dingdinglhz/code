@@ -131,7 +131,7 @@ public class LensDemoTutorialDialog extends JDialog {
 		//The method that set the program to a new Scene.
 		if(newSceneNum>n || newSceneNum<0){
 			System.out.print("There is only "+n+" scenes. Scene No."+newSceneNum+" not Found");
-			//reject undefined scene indexs.
+			//reject undefined scene index.
 		}else{
 			oldSceneNum=sceneNum;
 			sceneNum=newSceneNum;
@@ -139,7 +139,7 @@ public class LensDemoTutorialDialog extends JDialog {
 			textArea.setText(text[newSceneNum]);
 			//display the explanatory text.
 			if(parentDemo!=null){ //If parent demo exist, set the value of f and v.
-				if(oldSceneNum==-1){ //If this is the frist scene, simply set the value.
+				if(oldSceneNum==-1){ //If this is the first scene, simply set the value.
 					parentDemo.setValueExternal(f[sceneNum], u[sceneNum], 0,
 							   Double.NaN, LensDemoApplication.SolveFor.V);
 				}

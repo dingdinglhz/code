@@ -53,15 +53,15 @@ public class LensDemoCanvas extends JPanel {
             BasicStroke.JOIN_ROUND,1.0f, new float[]{10.0f}, 0.0f);
 	static Stroke thinGrid  =new BasicStroke(0.0f,BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND,1.0f);
-	//Useful constants related to the shape/color/line style/arrown style/
-	//dot style/graphing scale/lens stryle/text style.
+	//Useful constants related to the shape/color/line style/arrow style/
+	//dot style/graphing scale/lens style/text style.
 	
 	private double f=7.5,u=15,v=15;
 	//The crucial value of f, u and v.
 	private double objHeight=7.5,objWidth=2.0;
 	//The dimension of the picture representing the object
 	private int ctrX,ctrY,maxY,maxX;
-	//Useful variable to store the coorinate of the center and bottom right corner.
+	//Useful variable to store the coordinate of the center and bottom right corner.
 	private BufferedImage imgRO,imgVO,imgRI,imgVI;
 	//image of real object, virtual object, real image and virtual image.
 	private LensDemoApplication parentDemo;
@@ -245,7 +245,7 @@ public class LensDemoCanvas extends JPanel {
 		g.setStroke(thinSolid);
 		if(u>0){//if the object is real, draw a horizontal line
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
-		}else{//if the object is cirtual, draw a partially dashed horizontal line
+		}else{//if the object is virtual, draw a partially dashed horizontal line
 			drawArrow(g,0, (int)(ctrY-uY), ctrX, (int)(ctrY-uY));
 			g.setStroke(thinDashed);
 			drawArrow(g,ctrX, (int)(ctrY-uY),(int)(ctrX-uX), (int)(ctrY-uY));
@@ -277,7 +277,7 @@ public class LensDemoCanvas extends JPanel {
 		Stroke tmpStroke=g.getStroke();
 		double slope=uY/(uX-fX);
 		double offSetY=ctrY+slope*uX-uY; 
-		//get the intersec between the lens and the line from object to F'
+		//get the intersect between the lens and the line from object to F'
 		g.setStroke(thinSolid);
 		if(u>0 && f>0){  //real object & convex lens
 			drawArrow(g,(int)(ctrX-uX), (int)(ctrY-uY), (int)(ctrX-fX), ctrY);

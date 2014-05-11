@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 public class LensDemoHelpDialog extends JDialog {
 
 	private static final long serialVersionUID = -3438570127843520704L;
+	private Scanner scan;
 	/**
 	 * Create the dialog.
 	 */
@@ -37,7 +38,7 @@ public class LensDemoHelpDialog extends JDialog {
 		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		//Display the dialog.
 		InputStream in = LensDemoHelpDialog.class.getResourceAsStream("helpMessage.html");
-		Scanner scan=new Scanner(in,"UTF-8");
+		scan = new Scanner(in,"UTF-8");
 		String helpMessage="";
 		while(scan.hasNext()){
 			helpMessage+=scan.nextLine();
