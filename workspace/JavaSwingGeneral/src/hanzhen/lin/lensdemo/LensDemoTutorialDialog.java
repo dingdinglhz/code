@@ -32,6 +32,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Insets;
@@ -45,6 +48,9 @@ public class LensDemoTutorialDialog extends JDialog {
 	private static final int ANI_FRAME = 103;
 	private static final long ANI_PERIOD = 10;
 	//Useful constants concerning the size of the dialog and the animation.
+	private static final String voiceName="kevin16";
+	//constant specializes the voice used by tts engine.
+	
 	private double f[],u[];
 	private String text[];
 	private int n;
@@ -60,7 +66,9 @@ public class LensDemoTutorialDialog extends JDialog {
 	private TutorialAnimateTask task;
 	private Timer timer;
 	//Timer and TimerTask used for animated transition.
-
+	private Voice ttsVoice;
+	//TTS voice generator.
+	
 	public LensDemoTutorialDialog() {
 		
 		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -138,8 +146,20 @@ public class LensDemoTutorialDialog extends JDialog {
 			oldSceneNum=sceneNum;
 			sceneNum=newSceneNum;
 			//update the new scene number.
-			textArea.setText(text[newSceneNum]);
+			textArea.setText(text[sceneNum]);
 			//display the explanatory text.
+			//The previous button is disabled at first scene.
+			if(sceneNum==n){ //The text of next button is different for the last scene.
+				btnNext.setText("Finish Tutorial");
+			}else{
+				btnNext.setText("Next \u2192");
+			}//The text of next button is different for the last scene.
+			if(sceneNum==0){
+				btnPrevious.setEnabled(false);
+			}else{
+				btnPrevious.setEnabled(true);
+			}
+			
 			if(parentDemo!=null){ //If parent demo exist, set the value of f and v.
 				if(oldSceneNum==-1){ //If this is the first scene, simply set the value.
 					parentDemo.setValueExternal(f[sceneNum], u[sceneNum], 0,
@@ -151,20 +171,16 @@ public class LensDemoTutorialDialog extends JDialog {
 							f[sceneNum],u[sceneNum],ANI_FRAME);
 					timer.schedule(task,0, ANI_PERIOD);
 				}
-			}else{
-				System.out.print("The tutorial dialog is unable to find the parent QAQ!");
+			}else{//output error message if parent cannot be found.
+				System.err.print("The tutorial dialog is unable to find the parent QAQ!");
 			}
-
-			if(newSceneNum==n){ //The text of next button is different for the last scene.
-				btnNext.setText("Finish Tutorial");
-			}else{
-				btnNext.setText("Next \u2192");
-			}//The text of next button is different for the last scene.
-			if(newSceneNum==0){
-				btnPrevious.setEnabled(false);
-			}else{
-				btnPrevious.setEnabled(true);
-			}//The previous button is disabled at first scene.
+			if (ttsVoice != null){ttsVoice.deallocate();}
+			//If a TTS engine exist (reading), clear it to stop it and re-initialize.
+			initializeVoice(); //initialize TTS engine.
+			if (ttsVoice != null){// if initialization succeed, start TTS thread.
+				TTSThread ttsThread=new TTSThread(text[newSceneNum]);
+				ttsThread.start();//creates a new TTS thread and start it.
+			}//use TTS engine to read the explanatory text.
 		}
 	}
 
@@ -174,6 +190,7 @@ public class LensDemoTutorialDialog extends JDialog {
 	class TutorialAnimateTask extends TimerTask {//The TimerTask used in animation.
 		private double f1,u1,f2,u2; //The original and final set of f,u value.
 		private int n,i; //Number of frames and index of current frame
+		private boolean btnNextEnabled,btnPreviousEnabled;
 		TutorialAnimateTask(double f1, double u1, double f2, double u2, int n){
 			//The constructor that set necessary values.
 			this.f1=f1;
@@ -182,6 +199,9 @@ public class LensDemoTutorialDialog extends JDialog {
 			this.u2=u2;
 			this.n =n ;
 			i=0; //Starts from frame number 0
+			btnNextEnabled=btnNext.isEnabled();
+			btnPreviousEnabled=btnPrevious.isEnabled();
+			//store whether the buttons are currently enabled.
 			btnNext.setEnabled(false); 
 			btnPrevious.setEnabled(false);
 			//Disable the 2 buttons during the animation to avoid confusion.
@@ -191,8 +211,8 @@ public class LensDemoTutorialDialog extends JDialog {
 			if(i>n){
 				cancel();
 				timer.cancel();
-				btnNext.setEnabled(true); //Enable the buttons since the
-				btnPrevious.setEnabled(true); //animation has stopped.
+				btnNext.setEnabled(btnNextEnabled); //Enable the buttons since the
+				btnPrevious.setEnabled(btnPreviousEnabled); //animation has stopped.
 				return; //If the current frame exceeds the last frame, stop.
 			}
 			parentDemo.setValueExternal(f1+(f2-f1)*i/n, u1+(u2-u1)*i/n, 0,
@@ -200,6 +220,40 @@ public class LensDemoTutorialDialog extends JDialog {
 			//Set the f and u value externally.
 			i++; //Go to the next frame.
 		}
-		
+	}
+	private void initializeVoice(){
+		//Initialize TTS engine:
+		VoiceManager voiceManager = VoiceManager.getInstance();
+	    ttsVoice = voiceManager.getVoice(voiceName);
+	    //Get the voice in default.
+	    if (ttsVoice == null) {//if default voice is not available:
+	      	Voice tmp[]=voiceManager.getVoices();
+	        if(tmp.length>0){
+	   			ttsVoice=tmp[0];
+	        	System.err.println("Cannot find a voice named "+voiceName
+	        			+ ".Using: "+ttsVoice.getName());
+	        	}//If there are available voices, use the first one.
+	        else{
+	        	System.err.println("No voice avaliable.");
+	        }//If no voice is available, output error message.
+	    }
+	    if (ttsVoice != null){ttsVoice.allocate();}
+	    //Allocate resource for TTS engine if possible.
+	}
+	public void dispose(){
+	//overwrite the dispose() method, so that resource of TTS engine is released;
+		super.dispose();
+		if (ttsVoice != null){ttsVoice.deallocate();}//deallocate resource.
+	}
+	class TTSThread extends Thread{
+		//Running TTS directly will block the thread. Therefore, a separate 
+		//thread is used so that the voice is 
+		String textToBeSpoken;
+		TTSThread(String textToBeSpoken){
+			this.textToBeSpoken=textToBeSpoken;
+		}//Set the text to be spoken.
+		public void run(){
+			ttsVoice.speak(textToBeSpoken);
+		}//Speak the text.
 	}
 }
