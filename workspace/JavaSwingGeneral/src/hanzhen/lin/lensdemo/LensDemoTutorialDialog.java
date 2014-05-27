@@ -32,8 +32,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import com.sun.speech.freetts.Voice;
-import com.sun.speech.freetts.VoiceManager;
+//import com.sun.speech.freetts.Voice;
+//import com.sun.speech.freetts.VoiceManager;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -48,7 +48,7 @@ public class LensDemoTutorialDialog extends JDialog {
 	private static final int ANI_FRAME = 103;
 	private static final long ANI_PERIOD = 10;
 	//Useful constants concerning the size of the dialog and the animation.
-	private static final String voiceName="kevin16";
+	//private static final String voiceName="kevin16";
 	//constant specializes the voice used by tts engine.
 	
 	private double f[],u[];
@@ -66,7 +66,7 @@ public class LensDemoTutorialDialog extends JDialog {
 	private TutorialAnimateTask task;
 	private Timer timer;
 	//Timer and TimerTask used for animated transition.
-	private Voice ttsVoice;
+	//private Voice ttsVoice;
 	//TTS voice generator.
 	
 	public LensDemoTutorialDialog() {
@@ -174,6 +174,7 @@ public class LensDemoTutorialDialog extends JDialog {
 			}else{//output error message if parent cannot be found.
 				System.err.print("The tutorial dialog is unable to find the parent QAQ!");
 			}
+			/*
 			if (ttsVoice != null){ttsVoice.deallocate();}
 			//If a TTS engine exist (reading), clear it to stop it and re-initialize.
 			initializeVoice(); //initialize TTS engine.
@@ -181,6 +182,7 @@ public class LensDemoTutorialDialog extends JDialog {
 				TTSThread ttsThread=new TTSThread(text[newSceneNum]);
 				ttsThread.start();//creates a new TTS thread and start it.
 			}//use TTS engine to read the explanatory text.
+			*/
 		}
 	}
 
@@ -221,7 +223,7 @@ public class LensDemoTutorialDialog extends JDialog {
 			i++; //Go to the next frame.
 		}
 	}
-	private void initializeVoice(){
+	/*private void initializeVoice(){
 		//Initialize TTS engine:
 		VoiceManager voiceManager = VoiceManager.getInstance();
 	    ttsVoice = voiceManager.getVoice(voiceName);
@@ -255,5 +257,5 @@ public class LensDemoTutorialDialog extends JDialog {
 		public void run(){
 			ttsVoice.speak(textToBeSpoken);
 		}//Speak the text.
-	}
+	}*/
 }

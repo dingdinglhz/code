@@ -189,7 +189,7 @@ public class LensDemoApplication {
 		//Construct spinner and sliders for u, the distance of the object.
 		//Since the process is almost identical to the previous process for f, redundant commenting is saved.
 		
-		JLabel lblU = new JLabel("u:");
+		JLabel lblU = new JLabel("u(d_o):");
 		GridBagConstraints gbc_lblU = new GridBagConstraints();
 		gbc_lblU.fill = GridBagConstraints.BOTH;
 		gbc_lblU.insets = new Insets(0, 5, 5, 5);
@@ -250,7 +250,7 @@ public class LensDemoApplication {
 		//Construct spinner and sliders for v,the distance of the image.
 		//Since the process is almost identical to the previous process for f, redundant commenting is saved.
 
-		JLabel lblV = new JLabel("v:");
+		JLabel lblV = new JLabel("v(d_i):");
 		GridBagConstraints gbc_lblV = new GridBagConstraints();
 		gbc_lblV.fill = GridBagConstraints.BOTH;
 		gbc_lblV.insets = new Insets(0, 5, 0, 5);
