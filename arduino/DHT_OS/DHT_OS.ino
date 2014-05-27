@@ -117,7 +117,7 @@ void setup()
 {
   
   
-  Serial.begin(19200);
+  Serial.begin(125000);
   Serial.println();
   Serial.println("Status\tHumidity (%%)\tTemperature (C)\t DS18B20");
   
