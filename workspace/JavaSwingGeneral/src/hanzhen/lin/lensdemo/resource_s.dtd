@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Hello</comment>
-<entry key="n">12</entry>
+<entry key="n">6</entry>
 <entry key="f-0" > 7.5 </entry>
 <entry key="f-1" > 10.0</entry>
 <entry key="f-2" > 10.0</entry>
