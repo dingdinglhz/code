@@ -1,39 +1,31 @@
 //#define SERIAL_BUFFER_SIZE 128
 #include <U8glib.h>
 #include "image.h"
-U8GLIB_MINI12864 u8g(10, 9, 7);
+U8GLIB_MINI12864_2X u8g(10, 9, 7);
 //#define g_width 88
 //#define SEGMENT 16
 #define WIDTH_B 11
 #define HEIGHT 64
 #define WIDTH 86
-#define SEGMENTED_HEIGHT 2
+#define SEGMENTED_HEIGHT 16
 #define H_OFF 0
 unsigned char g_received[WIDTH_B * HEIGHT + 1];
 unsigned int page_count = 0;
 #define LED_PIN 6
 void draw(void)
 {
-    if (page_count)
-    {
-        u8g.drawBitmap(H_OFF,0,WIDTH_B,HEIGHT,g_received);
-    }
-    else
-    {
-        for (int i = 0; i < HEIGHT; i += SEGMENTED_HEIGHT)
-        {
+        
+        int i=page_count*SEGMENTED_HEIGHT;
             //u8g.drawXBMP(0,i,WIDTH,SEGMENTED_HEIGHT,x_bits+(WIDTH_B*i));
             digitalWrite(LED_PIN, LOW);
             Serial.readBytes(g_received+(WIDTH_B*i), WIDTH_B * SEGMENTED_HEIGHT);
+            Serial.write('N'); //Tell PC to start sending next round of data.
             //Serial.write(g_received,WIDTH_B*SEGMENTED_HEIGHT);
             digitalWrite(LED_PIN, HIGH);
             //u8g.drawXBM(0,i,WIDTH,SEGMENTED_HEIGHT,g_received);
-            u8g.drawBitmap(H_OFF, i, WIDTH_B, SEGMENTED_HEIGHT, g_received+(WIDTH_B*i));
+            u8g.drawBitmap(H_OFF,0,WIDTH_B,HEIGHT,g_received);
             //u8g.drawBitmapP(0,i,13,4,x_bits+(13*i));
-        }
         //u8g.drawXBMP(0,0,x_width,x_height,x_bits);
-    }
-
 }
 
 void graphic_setup()
