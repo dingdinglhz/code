@@ -1,17 +1,25 @@
 import serial,sys,time,base64
+import winsound
+wavFile= 'BadApple.wav'
+
 widthByte=11
 segmentHeight=16
 segPerFrame=4
-nofFrame=1314
+nofFrame=6566 #number of total frames
 imgSize=704
+strroot="ba_bin/ba"
+duration=219.15 #length of video in seconds
+
 binList=[None for i in range(nofFrame)]
 timeList=list()
-strroot="ba_bin/ba"
+
+
+
 for i in range(nofFrame):
 	path="ba_bin/ba{0:04}.bin".format(i)
 	f=open(path,"rb")
 	binTmp=f.read(imgSize)
-	binList[i]=list()
+	binList[i]=[None for j in range(segPerFrame)]
 	for j in range(segPerFrame):
 		binList[i][j]=binTmp[j*widthByte*segmentHeight : (j+1)*widthByte*segmentHeight]
 
@@ -23,28 +31,41 @@ for i in range(nofFrame):
 print("file loaded")
 
 ser=serial.Serial("COM3",125000)
+iniTime=None #declaring variable but real initial time depends on the first '-' signal
+iFrame=0
 iSeg=0
-while iSeg<(nofFrame*segPerFrame):
+started=False
+while True:
 	ready=False
-	while !ready:
+	while not ready:
 		while ser.inWaiting()==0:
 			pass
 		tmp=ser.read()
 		if tmp==b'N':
 			ready=True
 		elif tmp==b'-':
-			timeList.append(time.time())
-			
-	#print(ser.read(100).decode(encoding="ascii"))
-	ser.write(binList[iSeg/segPerFrame][iSeg%segPerFrame])
-	iSeg+=1
-	#print(base64.b16encode(ser.read(44)))
-	#print("tick")
-	#if(ser.inWaiting()>0):
-	#	while  ser.inWaiting()>0:
-	#		sys.stdout.write(ser.read().decode(encoding="ascii"));
-print(timeList)
-print(len(timeList))
+			tmpTime=time.time()
+			iSeg=0
+			if started:
+				iFrame=round( (tmpTime-iniTime)*nofFrame/duration )
+			else:
+				winsound.PlaySound(wavFile, winsound.SND_FILENAME|winsound.SND_ASYNC)
+				iniTime=time.time()
+				started=True
+				# if it is the first time that '-' is detected, start the play
+			timeList.append(tmpTime)
+		sys.stdout.write(tmp.decode(encoding="ascii"))
+	if iFrame>=nofFrame:
+		break
+	ser.write(binList[iFrame][iSeg])
+	print("iF:{0}".format(iFrame))
+	iSeg=(iSeg+1)%segPerFrame
 
-avgTime=(timeList[len(timeList)-1]-timeList[0])/len(timeList)
+log=open("log.txt",mode="w",encoding="utf-8")
+print(timeList,file=log)
+print(len(timeList),file=log)
+
+avgTime=(timeList[len(timeList)-1]-timeList[0])/(len(timeList)-1)
+print()
+print(avgTime,file=log)
 print(avgTime)
