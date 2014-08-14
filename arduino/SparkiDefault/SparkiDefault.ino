@@ -131,7 +131,7 @@ void loop() {
     Serial1.print(" z:");
     Serial1.println(z);
 
-    sparki.print("Accel XX: "); 
+    sparki.print("Accel X: "); 
     sparki.println(x);
 
     sparki.print("Accel Y: "); 
