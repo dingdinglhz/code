@@ -1,6 +1,7 @@
 //#define SERIAL_BUFFER_SIZE 128
 #include <U8glib.h>
 U8GLIB_MINI12864_2X u8g(10, 9, 7);
+//U8GLIB_DOGM128_2X u8g(17,4,12);
 //#define g_width 88
 //#define SEGMENT 16
 #define WIDTH_B 11
@@ -49,6 +50,7 @@ void graphic_setup()
 void setup()
 {
     Serial.begin(125000);
+    //Serial.begin(115200);
     graphic_setup();
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, HIGH);
