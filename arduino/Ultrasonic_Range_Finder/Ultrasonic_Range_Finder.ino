@@ -9,7 +9,7 @@
  
  http://arcbotics.com/products/sparki/parts/ultrasonic-range-finder/
 ********************************************/
-#include <Sparki.h> // include the sparki library
+#include "Sparki.h" // include the sparki library
 
 void setup()
 {
@@ -26,7 +26,7 @@ void loop()
     sparki.println(" cm"); 
     
     sparki.updateLCD();
-    delay(100); // wait 0.1 seconds (100 milliseconds)
+    delay(40); // wait 0.1 seconds (100 milliseconds)
     
     if(cm<10){
       digitalWrite(STATUS_LED,HIGH);

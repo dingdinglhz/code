@@ -328,7 +328,7 @@ void SparkiClass::moveRight(float deg)
   }
   else{
       if(deg < 0){
-        moveLeft(deg);
+        moveLeft(-deg);
       }
       else{
           stepRight(steps);
@@ -359,7 +359,7 @@ void SparkiClass::moveLeft(float deg)
   }
   else{
       if(deg < 0){
-        moveRight(deg);
+        moveRight(-deg);
       }
       else{
           stepLeft(steps);
@@ -390,7 +390,7 @@ void SparkiClass::moveForward(float cm)
   }
   else{
       if(cm < 0){
-        moveBackward(cm);
+        moveBackward(-cm);
       }
       else{
           stepForward(steps);
@@ -421,7 +421,7 @@ void SparkiClass::moveBackward(float cm)
   }
   else{
       if(cm < 0){
-        moveForward(cm);
+        moveForward(-cm);
       }
       else{
           stepBackward(steps);
@@ -580,18 +580,18 @@ int SparkiClass::ping_single(){
 }
 
 int SparkiClass::ping(){
-  int attempts = 5;
-  float distances [attempts];
-  for(int i=0; i<attempts; i++){
+
+  int distances [PING_ATTEMPTS];
+  for(int i=0; i<PING_ATTEMPTS; i++){
     distances[i] = ping_single();
     delay(20);
   }
   
   // sort them in order
   int i, j;
-  float temp;
+  int temp;
  
-  for (i = (attempts - 1); i > 0; i--)
+  for (i = (PING_ATTEMPTS - 1); i > 0; i--)
   {
     for (j = 1; j <= i; j++)
     {
@@ -605,7 +605,7 @@ int SparkiClass::ping(){
   }
   
   // return the middle entry
-  return int(distances[(int)ceil((float)attempts/2.0)]); 
+  return distances[(PING_ATTEMPTS+1)/2]; 
 }
 
 // Uses timer3 to send on/off IR pulses according to the NEC IR transmission standard
@@ -954,6 +954,9 @@ void SparkiClass::readi2cRegister(unsigned char address, unsigned char data, uin
 
   i2cSendStop();
 }
+
+
+
 
 
 

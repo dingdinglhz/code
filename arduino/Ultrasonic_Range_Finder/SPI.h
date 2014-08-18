@@ -68,11 +68,3 @@ void SPIClass::detachInterrupt() {
 }
 
 #endif
-
-
-
-
-
-
-
-

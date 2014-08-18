@@ -2,6 +2,7 @@
 #define Sparki_h
 
 #include "Arduino.h"
+#include "Print.h"
 
 #define SHIFTREG_LATCH      TXLED0   // PD5
 #define STATUS_LED          13        
@@ -13,9 +14,9 @@
 #define IR_SEND             6        // PD7
 
 #define SERVO               9        // 
-#define SERVO_LEFT          -75
+#define SERVO_LEFT          -80
 #define SERVO_CENTER        0
-#define SERVO_RIGHT         75
+#define SERVO_RIGHT         80
 
 // defining the MUX pins
 #define MUX_ANALOG		A2 // PF5
@@ -83,7 +84,7 @@
 #define RGB_OFF     0,   0,   0
 
 // properties about the robot in cm
-#define PI 3.1415926536
+#define PI 3.14159
 const int   STEPS_PER_REV          = 4096; // steps for wheels to revolve 360 degrees
 const float WHEEL_DIAMETER_CM      = 5.00;
 const float WHEEL_CIRCUMFERENCE_CM = WHEEL_DIAMETER_CM * PI;
@@ -117,6 +118,52 @@ const float CM_PER_DEGREE          = WHEEL_CIRCUMFERENCE_CM / 360.0;     // whee
 #define BLACK 0
 #define WHITE 1
 
+#define LCDWIDTH 128
+#define LCDHEIGHT 64
+
+#define CMD_DISPLAY_OFF   0xAE
+#define CMD_DISPLAY_ON    0xAF
+
+#define CMD_SET_DISP_START_LINE  0x60
+#define CMD_SET_PAGE  0xB0
+
+#define CMD_SET_COLUMN_UPPER  0x10
+#define CMD_SET_COLUMN_LOWER  0x00
+
+#define CMD_SET_ADC_NORMAL  0xA0
+#define CMD_SET_ADC_REVERSE 0xA1
+
+#define CMD_SET_DISP_NORMAL 0xA6
+#define CMD_SET_DISP_REVERSE 0xA7
+
+#define CMD_SET_ALLPTS_NORMAL 0xA4
+#define CMD_SET_ALLPTS_ON  0xA5
+#define CMD_SET_BIAS_9 0xA2 
+#define CMD_SET_BIAS_7 0xA3
+
+#define CMD_RMW  0xE0
+#define CMD_RMW_CLEAR 0xEE
+#define CMD_INTERNAL_RESET  0xE2
+#define CMD_SET_COM_NORMAL  0xC0
+#define CMD_SET_COM_REVERSE  0xC8
+#define CMD_SET_POWER_CONTROL  0x28
+#define CMD_SET_RESISTOR_RATIO  0x20
+#define CMD_SET_VOLUME_FIRST  0x81
+#define  CMD_SET_VOLUME_SECOND  0
+#define CMD_SET_STATIC_OFF  0xAC
+#define  CMD_SET_STATIC_ON  0xAD
+#define CMD_SET_STATIC_REG  0x0
+#define CMD_SET_BOOSTER_FIRST  0xF8
+#define CMD_SET_BOOSTER_234  0
+#define  CMD_SET_BOOSTER_5  1
+#define  CMD_SET_BOOSTER_6  3
+#define CMD_NOP  0xE3
+#define CMD_TEST  0xF0
+
+#define LCD_A0 4
+#define LCD_RST 12
+#define LCD_CS 17
+
 // SPI definitions
 #define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
 #define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
@@ -140,9 +187,9 @@ const float CM_PER_DEGREE          = WHEEL_CIRCUMFERENCE_CM / 360.0;     // whee
 
 #define SPEED_ARRAY_LENGTH 10  // uses an array to determine speed. 
                                // increase this number (<255) to increase precision of speed control
-#define PING_ATTEMPTS 7
 
-class SparkiClass{
+
+class SparkiClass : public Print {
 
 public:
   SparkiClass();
@@ -254,20 +301,57 @@ public:
   void onIR();
   void offIR();
 
+// Display Functions
+  void st7565_init(void);
+  void beginDisplay();
+  void st7565_command(uint8_t c);
+  void st7565_data(uint8_t c);
+  void st7565_set_brightness(uint8_t val);
+  void clear_display(void);
+  
+  void clearLCD();
+  void updateLCD();
+  void setPixelColor(uint8_t);
+  
+  void moveUpLine();
+  
+  uint8_t readPixel(uint8_t x, uint8_t y);
+  
+  void textWrite(const char* buffer, uint16_t len=0);
+
+  /* Play nice with Arduino's Print class */
+  virtual size_t write(uint8_t b) {
+    textWrite((const char *)&b, 1);
+    return 1;
+  }
+  virtual size_t write(const uint8_t *buffer, size_t size) {
+    textWrite((const char *)buffer, size);
+    return size;
+  }
+  
+  void drawPixel(uint8_t x, uint8_t y);  
+  void drawCircleFilled(uint8_t x0, uint8_t y0, uint8_t r);
+  void drawCircle(uint8_t x0, uint8_t y0, uint8_t r);
+  void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+  void drawRectFilled(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+  void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
+  void drawChar(uint8_t x, uint8_t line, char c);
+  void drawString(uint8_t x, uint8_t line, char *c);
+  void drawString_P(uint8_t x, uint8_t line, const char *c);
+  void drawBitmap(uint8_t x, uint8_t y, 
+		  const uint8_t *bitmap, uint8_t w, uint8_t h);
 
 private:    
   static void scheduler();
 
+// Display Functions
+  int8_t sid, sclk, a0, rst, cs;
+  void startSPI();
+  void spiwrite(uint8_t c);
+  void my_setpixel(uint8_t x, uint8_t y, uint8_t color);
 };
 
 extern SparkiClass sparki;
 
 #endif
-
-
-
-
-
-
-
 

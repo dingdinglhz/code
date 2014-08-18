@@ -48,11 +48,3 @@ void EEPROMClass::write(int address, uint8_t value)
 }
 
 EEPROMClass EEPROM;
-
-
-
-
-
-
-
-

@@ -28,7 +28,7 @@ int dis[ANG_N];//distance at different angles.
 //Notice, to save the calculating power and increase percision, the distance is taken as the sum of 2 measurement.
 //float posX, posY, direct;
 int angTmp, disTmp, i;
-int minD, maxI,maxD; //The max/min distance and its index.
+int mI, mD; //The max/min distance and its index. used as min first and max later
 //x,y coordinates and direction(in RAD) of the robot
 void setup()
 {
@@ -43,26 +43,19 @@ void setup()
     Serial1.println(F("RESET"));
 }
 
-void moveRobot(int cm)
+void moveRobot(const float &cm)
 {
     //move the robot while updating position.
-    
+    sparki.moveForward(cm);
     Serial1.print(F("M "));
     Serial1.println(cm);
-    if(cm!=0){sparki.moveForward(cm);}
 }
-void rotateRobot(int deg)
+void rotateRobot(const float &deg)
 {
     //rotate the robot while updating direction.
-    deg=-abs(deg);
+    sparki.moveRight(deg);
     Serial1.print(F("T "));
     Serial1.println(deg);
-    delay(SERVO_T);
-    if(deg>0){
-      sparki.moveRight(deg);
-    }else if(deg<0){
-      sparki.moveLeft(-deg);
-    }
 }
 void loop()
 {
@@ -78,14 +71,12 @@ void loop()
     for (angTmp = ANG_R, i = ANG_N - 1; i >= 0; i--, angTmp -= ANG_S) {
         sparki.servo(angTmp);
         delay(SERVO_T);
-        //delay(140);
         dis[i] = sparki.ping();
     }
     delay(SERVO_T);
     for (angTmp = ANG_L, i = 0; i < ANG_N; i++, angTmp += ANG_S) {
         sparki.servo(angTmp);
         delay(SERVO_T);
-        //delay(140);
         disTmp = sparki.ping();
         Serial1.print(F("A "));
         Serial1.print(angTmp);
@@ -96,24 +87,33 @@ void loop()
         Serial1.println(abs(dis[i] - disTmp));
         dis[i] += disTmp;
     }
-        minD = THR_DIST;maxI = 0; maxD = 0; //The max/min distance and its index. used as min here
+    if (dis[ANG_N / 2] < MIN_DIST) { //if very close to an obstacle, go back.
+        sparki.beep();
+        moveRobot(-STEP_LEN);
+        sparki.beep();
+    } else {
+        mD = THR_DIST; //The max/min distance and its index. used as min here
         for (i = 0; i < ANG_N; i++) {
-            if (dis[i] < minD) {
-                minD = dis[i];
-            }
-            if (dis[i] > maxD) {
-                maxI = i;
-                maxD = dis[i];
+            if (dis[i] < mD) {
+                mD = dis[i];
             }
         }
-        Serial1.println(F("C"));
-        if (minD < THR_DIST) {
-            rotateRobot(ANG_L + maxI * ANG_S);
+        if (mD < THR_DIST) {
+            //if close but still a reasonable distance away from an obstacle, try to find a best angle to turn.
+            sparki.beep();
+            mI = 0, mD = 0; //The max/min distance and its index. used as max here
+            for (i = 0; i < ANG_N; i++) {
+                if (dis[i] > mD) {
+                    mI = i;
+                    mD = dis[i];
+                }
+            }
+            rotateRobot(ANG_L + mI * ANG_S);
         } else {
             //if far from an obstacle, go ahead.
             moveRobot(STEP_LEN);
         }
-    //moveRobot(STEP_LEN);
+    }
 }
 
 
