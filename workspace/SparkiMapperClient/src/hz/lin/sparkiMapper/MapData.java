@@ -35,7 +35,7 @@ public class MapData {
     public synchronized void rotate(double rad) {//rotate clockwise, in radians
     	positionChanged=true;
     	currentAng -= rad;
-        while (currentAng < 0) {
+        while (currentAng <-Math.PI) {
             currentAng += Math.PI;
         }
         while (currentAng > Math.PI) {
@@ -52,7 +52,7 @@ public class MapData {
     	}
     	readings.lastElement().distances.add(new SingleDistance(ang,dis,err));
     }
-    public void LoadFromScanner(Scanner scan){
+    public void loadFromScanner(Scanner scan){
     	String command;
     	double tmpA,tmpB,tmpC;
     	while(scan.hasNext()){

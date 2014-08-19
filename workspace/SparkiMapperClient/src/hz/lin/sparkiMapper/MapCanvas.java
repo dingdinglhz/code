@@ -11,30 +11,36 @@ import javax.swing.JPanel;
 
 public class MapCanvas extends JPanel {
 	MapData dataSource;
-	static final int SCALE = 10;
+	static final int SCALE =1;
 	static final double sensorAxisDis=1.0;
 	static final double axisCenterDis=1.0;
-	static final double validityBase=0.618;
+	static final double validityErrBase=0.618;
+	static final double validityDisBase=0.987;
 	private int ctrX, ctrY, maxY, maxX;
-	static int dotR = 2;
+	static double dotR = 1.0;
 	private AffineTransform transform;
     /**
      * Create the panel.
      */
     public MapCanvas() {
-
+    	transform=new AffineTransform();
     }
-    public double validity(double err){
-    	return Math.pow(validityBase, err);
+    public void setDataSource(MapData dataSource){
+    	this.dataSource=dataSource;
+    }
+    public double validity(SingleDistance dist){
+    	//return Math.pow(validityErrBase, dist.err)*Math.pow(validityDisBase, dist.dis);
+    	return Math.pow(validityErrBase, dist.err)*Math.pow(validityDisBase, dist.dis);
     }
     public void updateAffineTransform(SingleReading reading){
     	transform.setToIdentity();
-    	transform.rotate(reading.ang);
     	transform.translate(reading.x, reading.y);
+    	transform.rotate(reading.ang);
     }
     public Point2D getPoint(SingleDistance dist){
-    	double x=(dist.dis+sensorAxisDis)*Math.cos(dist.ang);
-    	double y=(dist.dis+sensorAxisDis)*Math.sin(dist.ang)+axisCenterDis;
+    	double rad=dist.ang*Math.PI/180.0;
+    	double x=(dist.dis+sensorAxisDis)*Math.cos(-rad)+axisCenterDis;
+    	double y=(dist.dis+sensorAxisDis)*Math.sin(-rad);
     	Point2D p=new Point2D.Double(x, y);
     	transform.transform(p, p);
     	return p;
@@ -45,11 +51,16 @@ public class MapCanvas extends JPanel {
     	}
     	for (SingleReading reading: dataSource.readings) {
 			updateAffineTransform(reading);
+			//System.out.println("X: "+reading.x+" Y:"+reading.y+" Ang: "+reading.ang);
+			g.setColor(Color.red);
+			g.fillOval((int)(ctrX+reading.x*SCALE-dotR), (int)(ctrY-reading.y*SCALE-dotR),
+					(int)(dotR*2),(int)(dotR*2));
     		for(SingleDistance dist : reading.distances){
     			Point2D p=getPoint(dist);
-    			g.setColor(new Color(1,1,1,(float)validity(dist.err)));
-    			g.drawOval((int)(ctrX+p.getX()*SCALE-dotR), (int)(ctrY-p.getY()*SCALE-dotR),
-    					dotR*2, dotR*2);
+    			g.setColor(new Color(0,0,0,(float)validity(dist)));
+    			g.fillOval((int)(ctrX+p.getX()*SCALE-dotR), (int)(ctrY-p.getY()*SCALE-dotR),
+    					(int)(dotR*2), (int)(dotR*2));
+    			//System.out.println("trasfromed ( "+p.getX()+" , "+p.getY()+" )");
     		}
 		}
     }
