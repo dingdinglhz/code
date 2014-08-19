@@ -146,8 +146,8 @@ class SparkiClass{
 
 public:
   SparkiClass();
-  int ping_single();
-  int ping();
+  float ping_single();
+  float ping();
   void begin();
   void beep();
   void beep(int);

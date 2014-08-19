@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 
@@ -14,8 +15,10 @@ public class MapCanvas extends JPanel {
 	static final int SCALE =1;
 	static final double sensorAxisDis=1.0;
 	static final double axisCenterDis=1.0;
-	static final double validityErrBase=0.618;
-	static final double validityDisBase=0.987;
+	private double validityErrBase=0.618; //base of exponential function
+	private double validityDisBase=1.13;   //base of logistic function
+	private double validityDisThld=80; //threshold
+	private double portion=1.0;
 	private int ctrX, ctrY, maxY, maxX;
 	static double dotR = 1.0;
 	private AffineTransform transform;
@@ -30,7 +33,9 @@ public class MapCanvas extends JPanel {
     }
     public double validity(SingleDistance dist){
     	//return Math.pow(validityErrBase, dist.err)*Math.pow(validityDisBase, dist.dis);
-    	return Math.pow(validityErrBase, dist.err)*Math.pow(validityDisBase, dist.dis);
+    	double tmp= Math.pow(validityErrBase, dist.err);
+    	tmp*=0.5 / (1+Math.pow(validityDisBase, (dist.dis-validityDisThld) ) );
+    	return tmp;
     }
     public void updateAffineTransform(SingleReading reading){
     	transform.setToIdentity();
@@ -46,10 +51,14 @@ public class MapCanvas extends JPanel {
     	return p;
     }
     public void paintMap(Graphics2D g){
+    	//g.setBackground(Color.white);
+    	//g.clearRect(0, 0, maxX, maxY);
     	if(dataSource==null){
     		return; //No data source.
     	}
-    	for (SingleReading reading: dataSource.readings) {
+    	Vector<SingleReading> readings = dataSource.readings;
+		for (int i = 0; i < readings.size()*portion; i++) {
+			SingleReading reading = readings.get(i);
 			updateAffineTransform(reading);
 			//System.out.println("X: "+reading.x+" Y:"+reading.y+" Ang: "+reading.ang);
 			g.setColor(Color.red);
@@ -67,7 +76,6 @@ public class MapCanvas extends JPanel {
     
     public void paintComponent(Graphics g){
     	super.paintComponent(g);
-    	
     	Graphics2D g2d = (Graphics2D) g;
         maxY = getHeight();
         maxX = getWidth();
@@ -82,4 +90,19 @@ public class MapCanvas extends JPanel {
         
         
     }
+	public void setValidityErrBase(double validityErrBase) {
+		this.validityErrBase = validityErrBase;
+	}
+	public void setValidityDisBase(double validityDisBase) {
+		this.validityDisBase = validityDisBase;
+	}
+	public void setValidityDisThld(double validityDisThld) {
+		this.validityDisThld = validityDisThld;
+	}
+	public void setPortion(double portion) {
+		if(portion>1.0){
+			return;
+		}
+		this.portion = portion;
+	}
 }

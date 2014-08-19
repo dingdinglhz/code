@@ -36,10 +36,10 @@ public class MapData {
     	positionChanged=true;
     	currentAng -= rad;
         while (currentAng <-Math.PI) {
-            currentAng += Math.PI;
+            currentAng += 2*Math.PI;
         }
         while (currentAng > Math.PI) {
-            currentAng -= Math.PI;
+            currentAng -=2*Math.PI;
         }
     }
     public void rotateDeg(double deg) {//rotate clockwise, in degrees
@@ -59,7 +59,7 @@ public class MapData {
     		command=scan.next();
     		if(command.equals("A")){
     			tmpA=scan.nextDouble();
-    			tmpB=scan.nextDouble();
+    			tmpB=scan.nextDouble()/2; //Remember, the distance is doubled, so it has to be divided by 2!!!!
     			tmpC=scan.nextDouble();
     			newDistance(tmpA,tmpB,tmpC);
     		}else if(command.equals("M")){

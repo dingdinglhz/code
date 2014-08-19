@@ -17,18 +17,19 @@
 #define ANG_R 70 //angle-right.
 #define ANG_S 10 //seperation of sampling angles(deg)
 #define ANG_N 15 //number of samples
-#define SERVO_T 40 //time needed to wait for the servo to go to the correct position.
+#define SERVO_T 30 //time needed to wait for the servo to go to the correct position.
 
 #define MIN_DIST 16  //2* minimum distance(cm) - danger
-#define THR_DIST 30  //2* threshold distance(cm) - make turn 
+#define THR_DIST 20  //2* threshold distance(cm) - make turn 
 
 #define STEP_LEN 2 //length for each step(cm)
-
-int dis[ANG_N];//distance at different angles.
+#define MAX_CONS_TURN 6
+float dis[ANG_N];//distance at different angles.
 //Notice, to save the calculating power and increase percision, the distance is taken as the sum of 2 measurement.
 //float posX, posY, direct;
 int angTmp, disTmp, i;
 int minD, maxI,maxD; //The max/min distance and its index.
+int consecutiveTurn=0;
 //x,y coordinates and direction(in RAD) of the robot
 void setup()
 {
@@ -107,11 +108,13 @@ void loop()
             }
         }
         Serial1.println(F("C"));
-        if (minD < THR_DIST) {
+        if (minD < THR_DIST && consecutiveTurn<MAX_CONS_TURN) {
             rotateRobot(ANG_L + maxI * ANG_S);
+            ++consecutiveTurn;
         } else {
             //if far from an obstacle, go ahead.
             moveRobot(STEP_LEN);
+            consecutiveTurn=0;
         }
     //moveRobot(STEP_LEN);
 }

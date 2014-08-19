@@ -529,7 +529,7 @@ void SparkiClass::motorStop(int motor)
    return result;
  }
 
-int SparkiClass::ping_single(){
+float SparkiClass::ping_single(){
   long duration; 
   float cm;
   digitalWrite(ULTRASONIC_TRIG, LOW); 
@@ -576,12 +576,12 @@ int SparkiClass::ping_single(){
   duration = micros() - startCount;
   //--------- end pulsein
   cm = (float)duration / 29.0 / 2.0; 
-  return int(cm);
+  return cm;
 }
 
-int SparkiClass::ping(){
+float SparkiClass::ping(){
 
-  int distances [PING_ATTEMPTS];
+  float distances [PING_ATTEMPTS];
   for(int i=0; i<PING_ATTEMPTS; i++){
     distances[i] = ping_single();
     delay(20);
