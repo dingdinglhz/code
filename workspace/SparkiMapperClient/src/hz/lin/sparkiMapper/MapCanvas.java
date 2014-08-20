@@ -12,13 +12,14 @@ import javax.swing.JPanel;
 
 public class MapCanvas extends JPanel {
 	MapData dataSource;
-	static final int SCALE =1;
+	
 	static final double sensorAxisDis=1.0;
 	static final double axisCenterDis=1.0;
 	private double validityErrBase=0.618; //base of exponential function
 	private double validityDisBase=1.13;   //base of logistic function
 	private double validityDisThld=80; //threshold
 	private double portion=1.0;
+	private double scale =1.0;
 	private int ctrX, ctrY, maxY, maxX;
 	static double dotR = 1.0;
 	private AffineTransform transform;
@@ -62,12 +63,12 @@ public class MapCanvas extends JPanel {
 			updateAffineTransform(reading);
 			//System.out.println("X: "+reading.x+" Y:"+reading.y+" Ang: "+reading.ang);
 			g.setColor(Color.red);
-			g.fillOval((int)(ctrX+reading.x*SCALE-dotR), (int)(ctrY-reading.y*SCALE-dotR),
+			g.fillOval((int)(ctrX+reading.x*scale-dotR), (int)(ctrY-reading.y*scale-dotR),
 					(int)(dotR*2),(int)(dotR*2));
     		for(SingleDistance dist : reading.distances){
     			Point2D p=getPoint(dist);
     			g.setColor(new Color(0,0,0,(float)validity(dist)));
-    			g.fillOval((int)(ctrX+p.getX()*SCALE-dotR), (int)(ctrY-p.getY()*SCALE-dotR),
+    			g.fillOval((int)(ctrX+p.getX()*scale-dotR), (int)(ctrY-p.getY()*scale-dotR),
     					(int)(dotR*2), (int)(dotR*2));
     			//System.out.println("trasfromed ( "+p.getX()+" , "+p.getY()+" )");
     		}
@@ -104,5 +105,8 @@ public class MapCanvas extends JPanel {
 			return;
 		}
 		this.portion = portion;
+	}
+	public void setScale(double scale) {
+		this.scale = scale;
 	}
 }

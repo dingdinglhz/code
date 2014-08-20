@@ -55,8 +55,12 @@ public class MapData {
     public void loadFromScanner(Scanner scan){
     	String command;
     	double tmpA,tmpB,tmpC;
-    	while(scan.hasNext()){
+    	while(scan.hasNextLine()){
     		command=scan.next();
+    		//System.out.print(command);
+    		if(!scan.hasNextLine()){
+    			break;
+    		}
     		if(command.equals("A")){
     			tmpA=scan.nextDouble();
     			tmpB=scan.nextDouble()/2; //Remember, the distance is doubled, so it has to be divided by 2!!!!
