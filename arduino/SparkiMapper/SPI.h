@@ -76,3 +76,10 @@ void SPIClass::detachInterrupt() {
 
 
 
+
+
+
+
+
+
+

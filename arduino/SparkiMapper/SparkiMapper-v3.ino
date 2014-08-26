@@ -42,7 +42,6 @@ float disTmp[PING_NUM];
 int minD, maxI, maxD; //The max/min distance and its index.
 int consecutiveTurn = 0;
 bool clockWiseServo;
-bool controlled;
 void setup()
 {
     for (int i = 0; i < ANG_N; i++) {
@@ -50,7 +49,6 @@ void setup()
     }
     sparki.servo(ANG_L);
     clockWiseServo = true;
-    controlled = false;
     delay(SERVO_T);
     Serial1.println(F("RESET"));
 }
@@ -118,8 +116,7 @@ void checkAllDistance()
     }
     clockWiseServo = !clockWiseServo;
 }
-bool obstacleInFront()
-{
+bool obstacleInFront(){
     for (int i = ANG_N / 2 - 4; i <= ANG_N / 2 + 4; i++) {
         if (dis[i] < THR_DIST) {
             return true;
@@ -127,8 +124,7 @@ bool obstacleInFront()
     }
     return false;
 }
-void turnToMaxDistance()
-{
+void turnToMaxDistance(){
     maxI = 0; maxD = 0; //The max/min distance and its index.
     for (int i = 0; i < ANG_N; i++) {
         if (dis[i] > maxD && dis[i] + 10 * err[i] < IGNORE_THLHD) { //if larger and valid data exists,
@@ -139,8 +135,7 @@ void turnToMaxDistance()
     rotateRobot(ANG_L + maxI * ANG_S);
     ++consecutiveTurn;
 }
-int findMinDistance()
-{
+int findMinDistance(){
     minD = MAX_DIST; //The max/min distance and its index. used as min here
     for (int i = 0; i < ANG_N; i++) {
         if (dis[i] < minD) {
@@ -149,73 +144,20 @@ int findMinDistance()
     }
     return minD;
 }
-void moveAhead()
-{
+void moveAhead(){
     moveRobot(STEP_LEN);
     --consecutiveTurn;
-    if (consecutiveTurn < 0) {
-        consecutiveTurn = 0;
+    if(consecutiveTurn<0){
+        consecutiveTurn=0;
     }
-}
-void followSerialControl()
-{
-    do {
-        int tmp;
-        while (true) {
-            tmp = Serial1.read();
-            if(tmp==-1 && !controlled){
-                return;
-            }
-            if(tmp=='C'){
-                break;
-            }
-        }
-        while(true){
-            tmp = Serial1.read();
-            if(tmp!=-1){
-                break;
-            }
-        }
-        Serial1.print("tmp=");
-        Serial1.println(char(tmp));
-        int tmpI;
-        switch (tmp) {
-        case 'T':
-            tmpI = Serial1.parseInt();
-            Serial1.print("tmpI=");
-            Serial1.println(tmpI);
-            rotateRobot(tmpI);
-            checkAllDistance();
-            break;
-        case 'M':
-            tmpI = Serial1.parseInt();
-            Serial1.print("tmpI=");
-            Serial1.println(tmpI);
-            moveRobot(tmpI);
-            checkAllDistance();
-            break;
-        case 'E':
-            controlled = false;
-            break;
-        case 'S':
-            controlled = true;
-            break;
-        default:
-            break;
-        }
-    } while (controlled);
 }
 void loop()
 {
-    if (Serial1.available() > 0) {
-        followSerialControl();
-    }
-
     checkAllDistance();
 
     if (obstacleInFront()) {
         if (consecutiveTurn > MAX_CONS_TURN) {
-            do {
+            do{
                 rotateRobot(43); //select a prime number to avoid scanning the same angle;
                 checkAllDistance();
             } while (obstacleInFront());
@@ -230,15 +172,13 @@ void loop()
         } else {
             turnToMaxDistance();
         }
-    } else {
+    }
+    else {
         //if far from an obstacle, go ahead.
         moveAhead();
     }
     //moveRobot(STEP_LEN);
 }
-
-
-
 
 
 

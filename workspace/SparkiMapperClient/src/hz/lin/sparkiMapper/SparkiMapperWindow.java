@@ -29,6 +29,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
+import javax.swing.JToggleButton;
+import javax.swing.BoxLayout;
 
 public class SparkiMapperWindow {
 
@@ -51,6 +53,16 @@ public class SparkiMapperWindow {
 	
 	private SerialReceiver serRec;
 	private JButton btnSelectport;
+	private JPanel panelEast;
+	private JToggleButton tglbtnManualControl;
+	private JSpinner spinnerCT;
+	private JButton btnTurn;
+	private JSpinner spinnerCM;
+	private JButton btnMove;
+	private JToggleButton tglbtnNoWarning;
+	
+	private boolean suppressControlWarning=false;
+	private boolean controlStarted=false;
 	/**
 	 * Launch the application.
 	 * @throws FileNotFoundException 
@@ -91,7 +103,34 @@ public class SparkiMapperWindow {
 			System.out.println("Cannot access selected file!");
 		}
 	}
-
+	private void startControl(){
+		if(serRec==null){
+			JOptionPane.showMessageDialog(frmSparkiMapper,"Cannot control robot while serial port is null",
+					"Cannot Start Control",JOptionPane.ERROR_MESSAGE);
+			tglbtnManualControl.setSelected(false);
+			return;
+		}
+		controlStarted=true;
+		serRec.writeData("CS\n");
+		spinnerCT.setEnabled(true);
+		btnTurn.setEnabled(true);
+		spinnerCM.setEnabled(true);
+		btnMove.setEnabled(true);
+		tglbtnNoWarning.setEnabled(true);
+	}
+	private void stopControl(){
+		if(serRec==null){
+			JOptionPane.showMessageDialog(frmSparkiMapper,"Serial port is null while stopping control",
+					"Unexpected Situation",JOptionPane.WARNING_MESSAGE);
+		}
+		controlStarted=false;
+		serRec.writeData("CE\n");
+		spinnerCT.setEnabled(false);
+		btnTurn.setEnabled(false);
+		spinnerCM.setEnabled(false);
+		btnMove.setEnabled(false);
+		tglbtnNoWarning.setEnabled(false);
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 * @throws FileNotFoundException 
@@ -104,23 +143,24 @@ public class SparkiMapperWindow {
 		frmSparkiMapper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		canvas=new MapCanvas();
+		canvas.setEnabled(false);
 		frmSparkiMapper.getContentPane().add(canvas, BorderLayout.CENTER);
 		
-		JPanel panel = new JPanel();
-		frmSparkiMapper.getContentPane().add(panel, BorderLayout.SOUTH);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 22};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0};
-		panel.setLayout(gbl_panel);
+		JPanel panelSouth = new JPanel();
+		frmSparkiMapper.getContentPane().add(panelSouth, BorderLayout.SOUTH);
+		GridBagLayout gbl_panelSouth = new GridBagLayout();
+		gbl_panelSouth.columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelSouth.rowHeights = new int[]{0, 0};
+		gbl_panelSouth.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0};
+		gbl_panelSouth.rowWeights = new double[]{0.0, 0.0};
+		panelSouth.setLayout(gbl_panelSouth);
 		
 		lblPortion = new JLabel("Portion:");
 		GridBagConstraints gbc_lblPortion = new GridBagConstraints();
 		gbc_lblPortion.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPortion.gridx = 0;
 		gbc_lblPortion.gridy = 0;
-		panel.add(lblPortion, gbc_lblPortion);
+		panelSouth.add(lblPortion, gbc_lblPortion);
 		
 		sliderPortion = new JSlider(0,SlIDER_MAX,SlIDER_MAX);
 		sliderPortion.addChangeListener(new ChangeListener() {
@@ -139,11 +179,12 @@ public class SparkiMapperWindow {
 		gbc_sliderPortion.insets = new Insets(0, 0, 5, 5);
 		gbc_sliderPortion.gridx = 1;
 		gbc_sliderPortion.gridy = 0;
-		panel.add(sliderPortion, gbc_sliderPortion);
+		panelSouth.add(sliderPortion, gbc_sliderPortion);
 		
 		btnSelectport = new JButton("SelectPort");
 		btnSelectport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				tglbtnManualControl.setEnabled(true);
 				String portName=JOptionPane.showInputDialog("Please input the name of the serial port:");
 				if(serRec!=null){
 					serRec.stop();
@@ -157,7 +198,7 @@ public class SparkiMapperWindow {
 		gbc_btnSelectport.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSelectport.gridx = 8;
 		gbc_btnSelectport.gridy = 0;
-		panel.add(btnSelectport, gbc_btnSelectport);
+		panelSouth.add(btnSelectport, gbc_btnSelectport);
 		
 		labelErrBase = new JLabel("ErrBase:");
 		GridBagConstraints gbc_labelErrBase = new GridBagConstraints();
@@ -165,7 +206,7 @@ public class SparkiMapperWindow {
 		gbc_labelErrBase.insets = new Insets(0, 0, 0, 5);
 		gbc_labelErrBase.gridx = 0;
 		gbc_labelErrBase.gridy = 1;
-		panel.add(labelErrBase, gbc_labelErrBase);
+		panelSouth.add(labelErrBase, gbc_labelErrBase);
 		
 		spinnerErrBase = new JSpinner();
 		spinnerErrBase.setModel(new SpinnerNumberModel(0.618, 0, 1.0, 0.01));
@@ -181,17 +222,17 @@ public class SparkiMapperWindow {
 		gbc_spinnerErrBase.insets = new Insets(0, 0, 0, 5);
 		gbc_spinnerErrBase.gridx = 1;
 		gbc_spinnerErrBase.gridy = 1;
-		panel.add(spinnerErrBase, gbc_spinnerErrBase);
+		panelSouth.add(spinnerErrBase, gbc_spinnerErrBase);
 		
 		labelDisBase = new JLabel("DisBase:");
 		GridBagConstraints gbc_labelDisBase = new GridBagConstraints();
 		gbc_labelDisBase.insets = new Insets(0, 0, 0, 5);
 		gbc_labelDisBase.gridx = 2;
 		gbc_labelDisBase.gridy = 1;
-		panel.add(labelDisBase, gbc_labelDisBase);
+		panelSouth.add(labelDisBase, gbc_labelDisBase);
 		
 		spinnerDisBase = new JSpinner();
-		spinnerDisBase.setModel(new SpinnerNumberModel(1.13, 1.0, 10.0, 0.01));
+		spinnerDisBase.setModel(new SpinnerNumberModel(1.13, 1.0, null, 0.01));
 		spinnerDisBase.getModel().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SpinnerNumberModel source = (SpinnerNumberModel) e.getSource();
@@ -204,17 +245,17 @@ public class SparkiMapperWindow {
 		gbc_spinnerDisBase.insets = new Insets(0, 0, 0, 5);
 		gbc_spinnerDisBase.gridx = 3;
 		gbc_spinnerDisBase.gridy = 1;
-		panel.add(spinnerDisBase, gbc_spinnerDisBase);
+		panelSouth.add(spinnerDisBase, gbc_spinnerDisBase);
 		
 		labelDisThld = new JLabel("DisThld:");
 		GridBagConstraints gbc_labelDisThld = new GridBagConstraints();
 		gbc_labelDisThld.insets = new Insets(0, 0, 0, 5);
 		gbc_labelDisThld.gridx = 4;
 		gbc_labelDisThld.gridy = 1;
-		panel.add(labelDisThld, gbc_labelDisThld);
+		panelSouth.add(labelDisThld, gbc_labelDisThld);
 		
 		spinnerDisThld = new JSpinner();
-		spinnerDisThld.setModel(new SpinnerNumberModel(80.0, 0.0, 300.0, 5.0));
+		spinnerDisThld.setModel(new SpinnerNumberModel(80.0, 0.0, null, 5.0));
 		spinnerDisThld.getModel().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SpinnerNumberModel source = (SpinnerNumberModel) e.getSource();
@@ -227,14 +268,19 @@ public class SparkiMapperWindow {
 		gbc_spinnerDisThld.insets = new Insets(0, 0, 0, 5);
 		gbc_spinnerDisThld.gridx = 5;
 		gbc_spinnerDisThld.gridy = 1;
-		panel.add(spinnerDisThld, gbc_spinnerDisThld);
+		panelSouth.add(spinnerDisThld, gbc_spinnerDisThld);
 		
 		btnSelectfile = new JButton("SelectFile");
 		btnSelectfile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//JFileChooser chooser = new JFileChooser();
+				tglbtnManualControl.setEnabled(false);
 				int returnVal = chooser.showOpenDialog(frmSparkiMapper);
 				    if(returnVal == JFileChooser.APPROVE_OPTION) {
+				    	if(serRec!=null){
+							serRec.stop();
+							serRec=null;
+						}
 				    	File f=chooser.getSelectedFile();
 				       //System.out.println("You chose to open this file: " +f.getAbsolutePath());
 				       changeDataFile(f);
@@ -247,10 +293,10 @@ public class SparkiMapperWindow {
 		gbc_lblScale.insets = new Insets(0, 0, 0, 5);
 		gbc_lblScale.gridx = 6;
 		gbc_lblScale.gridy = 1;
-		panel.add(lblScale, gbc_lblScale);
+		panelSouth.add(lblScale, gbc_lblScale);
 		
 		spinnerScale = new JSpinner();
-		spinnerScale.setModel(new SpinnerNumberModel(1.0,0.0, 30.0,0.5));
+		spinnerScale.setModel(new SpinnerNumberModel(1.0,0.0, null,0.5));
 		spinnerScale.getModel().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SpinnerNumberModel source = (SpinnerNumberModel) e.getSource();
@@ -263,12 +309,96 @@ public class SparkiMapperWindow {
 		gbc_spinnerScale.insets = new Insets(0, 0, 0, 5);
 		gbc_spinnerScale.gridx = 7;
 		gbc_spinnerScale.gridy = 1;
-		panel.add(spinnerScale, gbc_spinnerScale);
+		panelSouth.add(spinnerScale, gbc_spinnerScale);
 		GridBagConstraints gbc_btnSelectfile = new GridBagConstraints();
 		gbc_btnSelectfile.fill = GridBagConstraints.BOTH;
 		gbc_btnSelectfile.gridx = 8;
 		gbc_btnSelectfile.gridy = 1;
-		panel.add(btnSelectfile, gbc_btnSelectfile);
+		panelSouth.add(btnSelectfile, gbc_btnSelectfile);
+		
+		panelEast = new JPanel();
+		frmSparkiMapper.getContentPane().add(panelEast, BorderLayout.EAST);
+		GridBagLayout gbl_panelEast = new GridBagLayout();
+		gbl_panelEast.columnWidths = new int[] {0, 0};
+		gbl_panelEast.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
+		gbl_panelEast.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panelEast.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelEast.setLayout(gbl_panelEast);
+		
+		tglbtnManualControl = new JToggleButton("Manual Ctrl");
+		tglbtnManualControl.setEnabled(false);
+		tglbtnManualControl.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(tglbtnManualControl.isSelected()){
+					startControl();
+				}else{
+					stopControl();
+				}
+			}
+		});
+		GridBagConstraints gbc_tglbtnManualControl = new GridBagConstraints();
+		gbc_tglbtnManualControl.fill = GridBagConstraints.HORIZONTAL;
+		gbc_tglbtnManualControl.insets = new Insets(0, 0, 5, 0);
+		gbc_tglbtnManualControl.gridx = 0;
+		gbc_tglbtnManualControl.gridy = 0;
+		panelEast.add(tglbtnManualControl, gbc_tglbtnManualControl);
+		
+		spinnerCT = new JSpinner();
+		spinnerCT.setModel(new SpinnerNumberModel(new Integer(0), null, null, new Integer(10)));
+		spinnerCT.setEnabled(false);
+		GridBagConstraints gbc_spinnerCT = new GridBagConstraints();
+		gbc_spinnerCT.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCT.fill = GridBagConstraints.HORIZONTAL;
+		gbc_spinnerCT.gridx = 0;
+		gbc_spinnerCT.gridy = 1;
+		panelEast.add(spinnerCT, gbc_spinnerCT);
+		
+		btnTurn = new JButton("Turn");
+		btnTurn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SpinnerNumberModel model =(SpinnerNumberModel)(spinnerCT.getModel());
+				serRec.writeData("CT"+model.getNumber().intValue()+"\n");
+			}
+		});
+		btnTurn.setEnabled(false);
+		GridBagConstraints gbc_btnTurn = new GridBagConstraints();
+		gbc_btnTurn.insets = new Insets(0, 0, 5, 0);
+		gbc_btnTurn.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnTurn.gridx = 0;
+		gbc_btnTurn.gridy = 2;
+		panelEast.add(btnTurn, gbc_btnTurn);
+		
+		spinnerCM = new JSpinner();
+		spinnerCM.setModel(new SpinnerNumberModel(new Integer(0), null, null, new Integer(1)));
+		spinnerCM.setEnabled(false);
+		GridBagConstraints gbc_spinnerCM = new GridBagConstraints();
+		gbc_spinnerCM.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCM.fill = GridBagConstraints.HORIZONTAL;
+		gbc_spinnerCM.gridx = 0;
+		gbc_spinnerCM.gridy = 3;
+		panelEast.add(spinnerCM, gbc_spinnerCM);
+		
+		btnMove = new JButton("Move");
+		btnMove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SpinnerNumberModel model =(SpinnerNumberModel)(spinnerCM.getModel());
+				serRec.writeData("CM"+model.getNumber().intValue()+"\n");
+			}
+		});
+		btnMove.setEnabled(false);
+		GridBagConstraints gbc_btnMove = new GridBagConstraints();
+		gbc_btnMove.insets = new Insets(0, 0, 5, 0);
+		gbc_btnMove.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnMove.gridx = 0;
+		gbc_btnMove.gridy = 4;
+		panelEast.add(btnMove, gbc_btnMove);
+		
+		tglbtnNoWarning = new JToggleButton("No Warning");
+		tglbtnNoWarning.setEnabled(false);
+		GridBagConstraints gbc_tglbtnNoWarning = new GridBagConstraints();
+		gbc_tglbtnNoWarning.gridx = 0;
+		gbc_tglbtnNoWarning.gridy = 5;
+		panelEast.add(tglbtnNoWarning, gbc_tglbtnNoWarning);
 		
 		
 	}

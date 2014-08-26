@@ -961,3 +961,10 @@ void SparkiClass::readi2cRegister(unsigned char address, unsigned char data, uin
 
 
 
+
+
+
+
+
+
+

@@ -1,5 +1,6 @@
 package hz.lin.sparkiMapper;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -21,22 +22,50 @@ public class SerialReceiver {
 	JPanel canvas;
 	FileWriter fout;
 	Calendar calendar;
-	private static final DateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+	private static final DateFormat df = new SimpleDateFormat("yyMMddHHmmss");
+	private File file;
     public static void main(String[] args) {
     	SerialReceiver rec=new SerialReceiver("COM3");
     }
     public void setCanvas(JPanel canvas){
     	this.canvas=canvas;
     }
+    public void writeData(String str){
+    	//serialPort.writeBytes(str.getBytes());
+    	if(serialPort==null){
+    		System.out.println("Null serialPort");
+    		return;
+    	}
+    	if(serialPort.isOpened()){
+    		try {
+    			serialPort.writeString(str);
+    		} catch (SerialPortException e) {
+    			System.out.print(str);
+    		}
+    	}else{
+    		System.out.println("serialPort not opened");
+    	}
+    }
     public SerialReceiver(String portName){
     	calendar=Calendar.getInstance();
-    	String fileName=df.format(calendar.getTime())+".txt";
+    	String parentPath=System.getProperty("user.dir");
+    	String fileName=File.separator+df.format(calendar.getTime())+".log";
     	try {
-			fout=new FileWriter(fileName);
+    		System.out.println(parentPath+fileName);
+    		file = new File(parentPath+fileName);
+    		System.out.println("is file:"+file.isFile());
+    		/* if (!file.getParentFile().exists()) {
+    			   file.getParentFile().mkdirs();
+    			  }*/
+
+     		System.out.println("is file:"+file.isFile());
+        	//file.mkdirs();
+    		file.createNewFile();
+    		System.out.println("is file:"+file.isFile());
+    		fout=new FileWriter(file);
 		} catch (IOException e) {
-			 System.out.println(e);
+			 e.printStackTrace();
 		}
-    	
     	data=new MapData();
     	start(portName);
     }
@@ -58,7 +87,7 @@ public class SerialReceiver {
     	try{
     	serialPort.removeEventListener();
     	serialPort.closePort();
-    	if(fout!=null){fout.close();}
+    	if(fout!=null){fout.flush();fout.close();}
     	}
     	catch (SerialPortException ex) {
             System.out.println(ex);
@@ -68,8 +97,9 @@ public class SerialReceiver {
 		}
     	
     }
-    protected void finalize(){
+    protected void finalize() throws Throwable{
     	stop();
+    	super.finalize();
     }
     public void updataData(){
     	if(data==null){

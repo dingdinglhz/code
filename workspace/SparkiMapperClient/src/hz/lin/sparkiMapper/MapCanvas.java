@@ -3,8 +3,11 @@ package hz.lin.sparkiMapper;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.Vector;
 
@@ -23,11 +26,19 @@ public class MapCanvas extends JPanel {
 	private int ctrX, ctrY, maxY, maxX;
 	static double dotR = 1.0;
 	private AffineTransform transform;
+	private AffineTransform drawingTransform;
+	private Path2D triangle;
     /**
      * Create the panel.
      */
     public MapCanvas() {
     	transform=new AffineTransform();
+    	triangle=new Path2D.Double();
+    	triangle.moveTo(0.75,0);
+    	triangle.lineTo(-0.75,0.75);
+    	triangle.lineTo(-0.75,-0.75);
+    	triangle.closePath();
+    	
     }
     public void setDataSource(MapData dataSource){
     	this.dataSource=dataSource;
@@ -63,8 +74,9 @@ public class MapCanvas extends JPanel {
 			updateAffineTransform(reading);
 			//System.out.println("X: "+reading.x+" Y:"+reading.y+" Ang: "+reading.ang);
 			g.setColor(Color.red);
-			g.fillOval((int)(ctrX+reading.x*scale-dotR), (int)(ctrY-reading.y*scale-dotR),
-					(int)(dotR*2),(int)(dotR*2));
+			//g.fillOval((int)(ctrX+reading.x*scale-dotR), (int)(ctrY-reading.y*scale-dotR),
+			//		(int)(dotR*2),(int)(dotR*2));
+			g.fill(drawingTransform.createTransformedShape(transform.createTransformedShape(triangle)));
     		for(SingleDistance dist : reading.distances){
     			Point2D p=getPoint(dist);
     			g.setColor(new Color(0,0,0,(float)validity(dist)));
@@ -73,6 +85,8 @@ public class MapCanvas extends JPanel {
     			//System.out.println("trasfromed ( "+p.getX()+" , "+p.getY()+" )");
     		}
 		}
+		g.setColor(Color.green);
+		g.fill(drawingTransform.createTransformedShape(transform.createTransformedShape(triangle)));
     }
     
     public void paintComponent(Graphics g){
@@ -87,6 +101,11 @@ public class MapCanvas extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         
+        drawingTransform=new AffineTransform();
+        
+        drawingTransform.translate(ctrX,ctrY);
+        drawingTransform.scale(scale,-scale);
+        //drawingTransform.scale(1,-1);
         paintMap(g2d);
         
         

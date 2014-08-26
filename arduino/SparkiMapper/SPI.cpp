@@ -67,3 +67,10 @@ void SPIClass::setClockDivider(uint8_t rate)
 
 
 
+
+
+
+
+
+
+
