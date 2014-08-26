@@ -63,6 +63,8 @@ public class SparkiMapperWindow {
 	
 	private boolean suppressControlWarning=false;
 	private boolean controlStarted=false;
+	private JButton btnCheckDis;
+	private JButton btnTMC;
 	/**
 	 * Launch the application.
 	 * @throws FileNotFoundException 
@@ -116,7 +118,10 @@ public class SparkiMapperWindow {
 		btnTurn.setEnabled(true);
 		spinnerCM.setEnabled(true);
 		btnMove.setEnabled(true);
+		btnCheckDis.setEnabled(true);
+		btnTMC.setEnabled(true);
 		tglbtnNoWarning.setEnabled(true);
+		
 	}
 	private void stopControl(){
 		if(serRec==null){
@@ -129,7 +134,13 @@ public class SparkiMapperWindow {
 		btnTurn.setEnabled(false);
 		spinnerCM.setEnabled(false);
 		btnMove.setEnabled(false);
+		btnCheckDis.setEnabled(false);
+		btnTMC.setEnabled(false);
 		tglbtnNoWarning.setEnabled(false);
+	}
+	public void setManualControlCommand(int theta, int dist){
+		spinnerCT.getModel().setValue(theta);
+		spinnerCM.getModel().setValue(dist);
 	}
 	/**
 	 * Initialize the contents of the frame.
@@ -138,12 +149,13 @@ public class SparkiMapperWindow {
 	private void initialize()  {
 		frmSparkiMapper = new JFrame();
 		frmSparkiMapper.setTitle("Sparki Mapper");
-		frmSparkiMapper.setMinimumSize(new Dimension(600, 300));
+		frmSparkiMapper.setMinimumSize(new Dimension(600, 400));
 		frmSparkiMapper.setBounds(100, 100, 450, 300);
 		frmSparkiMapper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		canvas=new MapCanvas();
-		canvas.setEnabled(false);
+		//canvas.setEnabled(false);
+		canvas.setParent(this);
 		frmSparkiMapper.getContentPane().add(canvas, BorderLayout.CENTER);
 		
 		JPanel panelSouth = new JPanel();
@@ -320,9 +332,9 @@ public class SparkiMapperWindow {
 		frmSparkiMapper.getContentPane().add(panelEast, BorderLayout.EAST);
 		GridBagLayout gbl_panelEast = new GridBagLayout();
 		gbl_panelEast.columnWidths = new int[] {0, 0};
-		gbl_panelEast.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
+		gbl_panelEast.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panelEast.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_panelEast.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelEast.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelEast.setLayout(gbl_panelEast);
 		
 		tglbtnManualControl = new JToggleButton("Manual Ctrl");
@@ -393,11 +405,44 @@ public class SparkiMapperWindow {
 		gbc_btnMove.gridy = 4;
 		panelEast.add(btnMove, gbc_btnMove);
 		
+		btnCheckDis = new JButton("Check Dis");
+		btnCheckDis.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				serRec.writeData("CA\n");
+			}
+		});
+		btnCheckDis.setEnabled(false);
+		GridBagConstraints gbc_btnCheckDis = new GridBagConstraints();
+		gbc_btnCheckDis.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnCheckDis.insets = new Insets(0, 0, 5, 0);
+		gbc_btnCheckDis.gridx = 0;
+		gbc_btnCheckDis.gridy = 5;
+		panelEast.add(btnCheckDis, gbc_btnCheckDis);
+		
+		btnTMC = new JButton("TMC Combo");
+		btnTMC.setEnabled(false);
+		btnTMC.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String tmp="";
+				SpinnerNumberModel model =(SpinnerNumberModel)(spinnerCT.getModel());
+				tmp+="CT"+model.getNumber().intValue()+"\n";
+				model =(SpinnerNumberModel)(spinnerCM.getModel());
+				tmp+="CM"+model.getNumber().intValue()+"\nCA\n";
+				serRec.writeData(tmp);
+			}
+		});
+		GridBagConstraints gbc_btnTMC = new GridBagConstraints();
+		gbc_btnTMC.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnTMC.insets = new Insets(0, 0, 5, 0);
+		gbc_btnTMC.gridx = 0;
+		gbc_btnTMC.gridy = 6;
+		panelEast.add(btnTMC, gbc_btnTMC);
+		
 		tglbtnNoWarning = new JToggleButton("No Warning");
 		tglbtnNoWarning.setEnabled(false);
 		GridBagConstraints gbc_tglbtnNoWarning = new GridBagConstraints();
 		gbc_tglbtnNoWarning.gridx = 0;
-		gbc_tglbtnNoWarning.gridy = 5;
+		gbc_tglbtnNoWarning.gridy = 7;
 		panelEast.add(tglbtnNoWarning, gbc_tglbtnNoWarning);
 		
 		

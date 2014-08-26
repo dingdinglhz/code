@@ -176,24 +176,24 @@ void followSerialControl()
                 break;
             }
         }
-        Serial1.print("tmp=");
+        //Serial1.print("tmp=");
         Serial1.println(char(tmp));
         int tmpI;
         switch (tmp) {
         case 'T':
             tmpI = Serial1.parseInt();
-            Serial1.print("tmpI=");
-            Serial1.println(tmpI);
+            //Serial1.print("tmpI=");
+            //Serial1.println(tmpI);
             rotateRobot(tmpI);
-            checkAllDistance();
             break;
         case 'M':
             tmpI = Serial1.parseInt();
-            Serial1.print("tmpI=");
-            Serial1.println(tmpI);
+            //Serial1.print("tmpI=");
+            //Serial1.println(tmpI);
             moveRobot(tmpI);
-            checkAllDistance();
             break;
+        case 'A':
+            checkAllDistance();
         case 'E':
             controlled = false;
             break;

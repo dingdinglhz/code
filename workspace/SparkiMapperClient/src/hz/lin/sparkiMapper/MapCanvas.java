@@ -3,15 +3,20 @@ package hz.lin.sparkiMapper;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MapCanvas extends JPanel {
 	MapData dataSource;
@@ -28,16 +33,43 @@ public class MapCanvas extends JPanel {
 	private AffineTransform transform;
 	private AffineTransform drawingTransform;
 	private Path2D triangle;
+	private SparkiMapperWindow parent;
     /**
      * Create the panel.
      */
     public MapCanvas() {
+    	addMouseListener(new MouseAdapter() {
+    		@Override
+    		public void mousePressed(MouseEvent e) {
+    			System.out.println("Coordinate: ("+e.getX()+","+e.getY()+")");
+    			if(transform!=null && drawingTransform!=null){
+    				Point2D p=new Point2D.Double(e.getX(),e.getY());
+    				try {
+						drawingTransform.inverseTransform(p,p);
+						transform.inverseTransform(p, p);
+					} catch (NoninvertibleTransformException nonInvE) {
+						// TODO Auto-generated catch block
+						System.out.println(nonInvE);
+					}
+    				System.out.println("Transformed: ("+p.getX()+","+p.getY()+")");
+    				double theta=-Math.toDegrees(Math.atan2(p.getY(), p.getX()));
+    				double dist=p.distance(0, 0);
+    				System.out.println("Theta: "+theta+", dist:"+dist);
+    				if(parent!=null){
+    					parent.setManualControlCommand((int)theta,(int)dist);
+    				}
+    				
+    			}
+    			
+    		}
+    	});
     	transform=new AffineTransform();
     	triangle=new Path2D.Double();
     	triangle.moveTo(0.75,0);
     	triangle.lineTo(-0.75,0.75);
     	triangle.lineTo(-0.75,-0.75);
     	triangle.closePath();
+    	
     	
     }
     public void setDataSource(MapData dataSource){
@@ -127,5 +159,8 @@ public class MapCanvas extends JPanel {
 	}
 	public void setScale(double scale) {
 		this.scale = scale;
+	}
+	public void setParent(SparkiMapperWindow parent){
+		this.parent=parent;
 	}
 }
